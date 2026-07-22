@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>लाल किताब AI — Lal Kitab Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B0000;--crimson-l:#B22222;--saffron:#FF9933;--saffron-l:#FFBC66;
+  --gold:#C8922A;--gold-l:#E5B84A;--parchment:#F5E6C8;--parchment-d:#E8D5A8;
+  --ink:#1A0A00;--ink-soft:#3D1F00;--ink-muted:#7A5C3A;
+  --surface:#FDF6E9;--card:#FFFBF2;--border:#D4B483;--border-l:#EDD9A8;
+  --success:#2E7D32;--caution:#E65100;--info:#1565C0;
+  --shadow:0 4px 24px rgba(139,0,0,.10);--shadow-lg:0 8px 40px rgba(139,0,0,.16);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;overflow-x:hidden}
+header{background:linear-gradient(135deg,var(--ink) 0%,var(--crimson) 60%,var(--ink-soft) 100%);position:relative;overflow:hidden}
+header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C8922A' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.hi{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:28px 24px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.hbrand{display:flex;align-items:center;gap:16px}
+.hicon{width:56px;height:56px;background:linear-gradient(135deg,var(--saffron),var(--gold));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 16px rgba(255,153,51,.4);flex-shrink:0}
+.htxt h1{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:900;color:var(--parchment);letter-spacing:.04em;line-height:1.1}
+.htxt h1 span{color:var(--saffron)}
+.htxt p{font-size:.78rem;color:rgba(245,230,200,.7);margin-top:4px;letter-spacing:.06em;font-family:'Cinzel',serif}
+.hbadge{background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.4);border-radius:8px;padding:8px 14px;text-align:center;flex-shrink:0}
+.hbadge .bl{font-size:.61rem;color:var(--gold-l);letter-spacing:.1em;text-transform:uppercase}
+.hbadge .bv{font-family:'Cinzel',serif;font-size:.88rem;color:var(--saffron);font-weight:600}
+/* STATUS BAR */
+.sbar{background:linear-gradient(135deg,#1A0A00,#2D0F0F);border-bottom:2px solid var(--gold);padding:10px 0}
+.sbar-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sdot{width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;animation:pulse 1.5s ease infinite}
+.sdot.ok{background:#4CAF50;animation:none}
+.sdot.err{background:#f44336;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.slabel{font-size:.69rem;color:var(--gold-l);letter-spacing:.07em;text-transform:uppercase;font-weight:600;white-space:nowrap}
+.sval{font-size:.69rem;color:rgba(245,230,200,.55)}
+.sdiv{width:1px;height:20px;background:rgba(200,146,42,.2);flex-shrink:0}
+/* KEY BAR */
+.kbar{background:rgba(20,8,0,.95);border-bottom:1px solid rgba(200,146,42,.15);padding:10px 0}
+.ki{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.kl{font-size:.69rem;color:var(--gold-l);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;font-weight:600}
+.kinp{flex:1;min-width:220px;background:rgba(255,255,255,.06);border:1px solid rgba(200,146,42,.25);border-radius:6px;padding:7px 12px;color:var(--parchment);font-size:.8rem;font-family:monospace;outline:none;transition:border-color .2s}
+.kinp:focus{border-color:var(--saffron)}
+.kinp::placeholder{color:rgba(245,230,200,.3)}
+.kdot{width:8px;height:8px;border-radius:50%;background:#444;flex-shrink:0;transition:background .3s}
+.kdot.ok{background:#4CAF50}
+/* GITHUB CONFIG */
+.ghbar{background:rgba(15,5,0,.9);border-bottom:1px solid rgba(200,146,42,.1);padding:8px 0}
+.ghinner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ghlabel{font-size:.67rem;color:var(--gold-l);letter-spacing:.07em;text-transform:uppercase;font-weight:600;white-space:nowrap}
+.ghinp{flex:1;min-width:260px;background:rgba(255,255,255,.05);border:1px solid rgba(200,146,42,.2);border-radius:5px;padding:5px 10px;color:var(--parchment);font-size:.75rem;font-family:monospace;outline:none}
+.ghinp:focus{border-color:var(--gold)}
+.ghinp::placeholder{color:rgba(245,230,200,.25)}
+.ghbtn{background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.3);color:var(--gold-l);padding:5px 12px;border-radius:5px;font-size:.69rem;cursor:pointer;white-space:nowrap;transition:all .2s}
+.ghbtn:hover{background:rgba(200,146,42,.25);color:var(--saffron)}
+.ghdot{width:7px;height:7px;border-radius:50%;background:#444;flex-shrink:0}
+.ghdot.ok{background:#4CAF50}
+.ghdot.err{background:#f44336}
+.ghnote{font-size:.64rem;color:rgba(245,230,200,.35);flex:100%}
+/* MAIN */
+.mw{max-width:1100px;margin:0 auto;padding:24px 24px 60px}
+.ecard{background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;margin-bottom:28px}
+.ehd{background:linear-gradient(135deg,var(--crimson),var(--ink-soft));padding:18px 26px;display:flex;align-items:center;gap:12px}
+.ehd h2{font-family:'Cinzel',serif;font-size:1.05rem;color:var(--parchment);font-weight:700}
+.ehd p{font-size:.76rem;color:rgba(245,230,200,.7);margin-top:2px}
+.ebody{padding:26px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:15px}
+.fl{font-size:.72rem;font-weight:600;color:var(--ink-soft);letter-spacing:.05em;text-transform:uppercase}
+.fl .req{color:var(--crimson)}
+.fl .opt{color:var(--ink-muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:.66rem}
+input,select,textarea{background:var(--surface);border:1.5px solid var(--border-l);border-radius:10px;padding:9px 13px;font-size:.86rem;color:var(--ink);font-family:'Inter',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--crimson-l);box-shadow:0 0 0 3px rgba(139,0,0,.08)}
+textarea{resize:vertical;min-height:66px}
+.place-row{display:flex;gap:8px}
+.place-row input{flex:1}
+.afbtn{flex-shrink:0;background:linear-gradient(135deg,#6B0000,var(--crimson-l));color:white;border:none;padding:0 13px;border-radius:10px;font-size:.77rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.afbtn:hover{opacity:.85}
+.cwrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(103px,1fr));gap:7px;margin-top:5px}
+.chip{padding:7px 5px;border:1.5px solid var(--border-l);border-radius:8px;cursor:pointer;text-align:center;font-size:.73rem;font-weight:500;color:var(--ink-muted);background:var(--surface);transition:all .17s;user-select:none}
+.chip:hover{border-color:var(--crimson-l);color:var(--crimson)}
+.chip.on{border-color:var(--crimson);background:rgba(139,0,0,.07);color:var(--crimson);font-weight:600}
+.chip .ci{display:block;font-size:1.1rem;margin-bottom:2px}
+.stog{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border:1.5px solid var(--border-l);border-radius:10px;cursor:pointer;background:var(--surface);transition:border-color .2s}
+.stog:hover{border-color:var(--gold)}
+.stog input[type=checkbox]{width:16px;height:16px;accent-color:var(--crimson);cursor:pointer;flex-shrink:0;margin-top:2px}
+.stog strong{font-size:.82rem;color:var(--ink)}
+.stog small{display:block;font-size:.71rem;color:var(--ink-muted);margin-top:2px}
+#sam-qs{display:none;margin-top:12px;padding:15px;background:rgba(200,146,42,.04);border:1px solid var(--border-l);border-radius:10px}
+#sam-qs.show{display:block}
+.sqt{font-size:.71rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;margin:12px 0 7px;border-bottom:1px solid var(--border-l);padding-bottom:4px}
+.sqt:first-child{margin-top:0}
+.sqg{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:9px}
+.sqi{display:flex;flex-direction:column;gap:3px}
+.sqi label{font-size:.7rem;color:var(--ink-soft);font-weight:500}
+.sqi select{font-size:.8rem;padding:6px 9px}
+.srow{margin-top:22px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bgo{background:linear-gradient(135deg,var(--crimson),var(--crimson-l));color:white;border:none;padding:13px 30px;border-radius:12px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Cinzel',serif;box-shadow:0 4px 16px rgba(139,0,0,.3);transition:all .2s;display:flex;align-items:center;gap:7px}
+.bgo:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 22px rgba(139,0,0,.4)}
+.bgo:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.brst{background:transparent;border:1.5px solid var(--border);color:var(--ink-muted);padding:13px 20px;border-radius:12px;font-size:.84rem;cursor:pointer;transition:all .2s}
+.brst:hover{border-color:var(--crimson);color:var(--crimson)}
+.disc{font-size:.7rem;color:var(--ink-muted);background:rgba(200,146,42,.07);border:1px solid var(--border-l);border-radius:8px;padding:9px 13px;margin-top:11px;line-height:1.5}
+/* LOADING */
+#ldpan{display:none;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;margin-bottom:28px;box-shadow:var(--shadow-lg)}
+.ld-title{font-family:'Cinzel',serif;font-size:1.05rem;color:var(--crimson);margin-bottom:6px;text-align:center}
+.ld-sub{font-size:.78rem;color:var(--ink-muted);text-align:center;margin-bottom:28px}
+.ld-overall{height:5px;background:var(--border-l);border-radius:4px;overflow:hidden;margin-bottom:28px}
+.ld-bar{height:100%;background:linear-gradient(90deg,var(--crimson),var(--saffron));border-radius:4px;width:0%;transition:width .5s ease}
+.agent-grid{display:flex;flex-direction:column;gap:10px}
+.agent-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--border-l);transition:all .3s}
+.agent-row.running{background:rgba(139,0,0,.04);border-color:var(--crimson-l)}
+.agent-row.done{background:rgba(46,125,50,.04);border-color:#2E7D32}
+.agent-icon{font-size:1.2rem;flex-shrink:0;width:28px;text-align:center}
+.agent-name{font-size:.82rem;font-weight:600;color:var(--ink);flex:1}
+.agent-desc{font-size:.73rem;color:var(--ink-muted)}
+.agent-status{font-size:.72rem;font-weight:700;white-space:nowrap}
+.agent-status.wait{color:var(--ink-muted)}
+.agent-status.run{color:var(--crimson)}
+.agent-status.ok{color:var(--success)}
+/* ERROR */
+.ebox{background:#fff5f5;border:1.5px solid #f44336;border-radius:11px;padding:13px 17px;margin-bottom:20px;display:none}
+.ebox.show{display:block}
+.ebox strong{color:#c62828;font-size:.85rem}
+.ebox p{font-size:.8rem;color:#555;margin-top:4px;line-height:1.5}
+/* RESULTS */
+#respanel{display:none}
+.rhd{background:linear-gradient(135deg,var(--ink),var(--crimson));border-radius:15px;padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.rname{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--parchment);font-weight:700}
+.rdob{font-size:.77rem;color:rgba(245,230,200,.7);margin-top:2px}
+.rmeta{display:flex;gap:7px;margin-left:auto;flex-wrap:wrap;align-items:center}
+.mpill{background:rgba(255,255,255,.1);border:1px solid rgba(200,146,42,.3);border-radius:18px;padding:4px 12px;font-size:.72rem;color:var(--saffron)}
+.cbadge{padding:4px 13px;border-radius:18px;font-size:.73rem;font-weight:700}
+.ch{background:rgba(46,125,50,.15);color:#2E7D32;border:1px solid #2E7D32}
+.cm{background:rgba(230,81,0,.12);color:#E65100;border:1px solid #E65100}
+.cl{background:rgba(21,101,192,.12);color:#1565C0;border:1px solid #1565C0}
+.tnav{display:flex;overflow-x:auto;border-bottom:2px solid var(--border);margin-bottom:20px;scrollbar-width:none}
+.tnav::-webkit-scrollbar{display:none}
+.tb{padding:10px 17px;border:none;background:transparent;font-size:.8rem;font-weight:600;color:var(--ink-muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .17s;font-family:'Inter',sans-serif}
+.tb:hover{color:var(--crimson)}
+.tb.on{color:var(--crimson);border-bottom-color:var(--crimson);background:rgba(139,0,0,.04)}
+.tc{display:none}
+.tc.on{display:block}
+.sc{background:var(--card);border:1px solid var(--border-l);border-radius:15px;padding:19px 21px;margin-bottom:15px;box-shadow:var(--shadow)}
+.sc h3{font-family:'Cinzel',serif;font-size:.9rem;color:var(--crimson);margin-bottom:11px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border-l);padding-bottom:8px}
+.sc .txt{font-size:.86rem;line-height:1.75;color:var(--ink-soft);white-space:pre-wrap}
+.ptbl{width:100%;border-collapse:collapse}
+.ptbl th{font-size:.69rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.04em;padding:7px 10px;background:var(--parchment-d);text-align:left;border-bottom:2px solid var(--border)}
+.ptbl td{padding:8px 10px;font-size:.8rem;border-bottom:1px solid var(--border-l);vertical-align:middle}
+.ptbl tr:last-child td{border-bottom:none}
+.ptbl tr:hover td{background:rgba(245,230,200,.3)}
+.pb{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.69rem;font-weight:600}
+.pb-ex{background:rgba(200,146,42,.15);color:var(--gold)}
+.pb-de{background:rgba(198,40,40,.12);color:#C62828}
+.pb-sl{background:rgba(100,100,100,.12);color:#666}
+.pb-re{background:rgba(21,101,192,.10);color:#1565C0}
+.pb-ac{background:rgba(46,125,50,.12);color:#2E7D32}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px}
+.dc{background:var(--surface);border:1.5px solid var(--border-l);border-radius:10px;padding:12px 14px;border-left:4px solid var(--border)}
+.dc.ok{border-left-color:#2E7D32}.dc.warn{border-left-color:#E65100}.dc.alert{border-left-color:var(--crimson)}.dc.good{border-left-color:var(--gold)}
+.dt{font-size:.73rem;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.dd{font-size:.81rem;line-height:1.6;color:var(--ink-soft)}
+.rlist{list-style:none}
+.ri{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border-l)}
+.ri:last-child{border-bottom:none}
+.rnum{width:26px;height:26px;flex-shrink:0;background:linear-gradient(135deg,var(--crimson),var(--crimson-l));color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.69rem;font-weight:700}
+.rbody{flex:1}
+.rtit{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:2px}
+.rdesc{font-size:.78rem;color:var(--ink-muted);line-height:1.5}
+.rtag{display:inline-block;margin-top:3px;padding:2px 7px;border-radius:7px;font-size:.65rem;font-weight:600;background:rgba(200,146,42,.12);color:var(--gold);border:1px solid rgba(200,146,42,.2)}
+.tl{position:relative;padding-left:24px}
+.tl::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--crimson),var(--border-l))}
+.tli{position:relative;margin-bottom:17px}
+.tld{position:absolute;left:-21px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--crimson);border:2px solid var(--parchment);box-shadow:0 0 0 2px var(--crimson)}
+.tld.g{background:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.tld.gr{background:#2E7D32;box-shadow:0 0 0 2px #2E7D32}
+.tlp{font-size:.68rem;font-weight:700;color:var(--gold);letter-spacing:.05em;text-transform:uppercase}
+.tlh{font-size:.88rem;font-weight:600;color:var(--ink);margin:2px 0}
+.tlb{font-size:.79rem;color:var(--ink-muted);line-height:1.5}
+.rinb{background:linear-gradient(135deg,rgba(139,0,0,.05),rgba(200,146,42,.05));border:1.5px solid rgba(200,146,42,.25);border-radius:10px;padding:14px 16px;margin-top:12px}
+.rint{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.rinb-body{font-size:.8rem;color:var(--ink-muted);line-height:1.6}
+.dasha-strip{display:flex;gap:0;margin-bottom:16px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.ds-item{flex:1;padding:10px 12px;text-align:center;border-right:1px solid var(--border)}
+.ds-item:last-child{border-right:none}
+.ds-label{font-size:.62rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ds-val{font-size:.85rem;font-weight:700;color:var(--crimson)}
+.ds-end{font-size:.68rem;color:var(--ink-muted);margin-top:2px}
+.safety{background:rgba(21,101,192,.06);border:1px solid rgba(21,101,192,.2);border-radius:8px;padding:10px 14px;margin-top:13px;font-size:.74rem;color:var(--info);line-height:1.5;display:flex;gap:7px;align-items:flex-start}
+.ract{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.pbtn{background:transparent;border:1.5px solid var(--border);color:var(--ink-muted);padding:7px 15px;border-radius:8px;font-size:.77rem;cursor:pointer;transition:all .17s;display:flex;align-items:center;gap:5px}
+.pbtn:hover{border-color:var(--gold);color:var(--gold)}
+@media(max-width:640px){
+  .hi{flex-direction:column;align-items:flex-start}
+  .hbadge{display:none}
+  .htxt h1{font-size:1.2rem}
+  .fgrid,.dgrid{grid-template-columns:1fr}
+  .tb{padding:9px 11px;font-size:.73rem}
+  .dasha-strip{flex-direction:column}
+  .ds-item{border-right:none;border-bottom:1px solid var(--border)}
+}
+@media print{
+  header,.sbar,.kbar,.ghbar,.ecard,.tnav,.ract,.ebox,#ldpan,.tb{display:none!important}
+  .tc{display:block!important}
+  body{background:white!important;font-size:12px}
+  .rhd{background:#8B0000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border-radius:8px!important}
+  .sc{box-shadow:none!important;border:1px solid #ddd!important;break-inside:avoid;margin-bottom:10px!important}
+  .dasha-strip{border:1px solid #ddd!important;break-inside:avoid}
+  .dc,.ri,.tli{break-inside:avoid}
+  #respanel{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hi">
+    <div class="hbrand">
+      <div class="hicon">🔴</div>
+      <div class="htxt">
+        <h1>लाल किताब <span>AI</span></h1>
+        <p>Lal Kitab · Samudric Shastra · Vedic Intelligence Platform</p>
+      </div>
+    </div>
+    <div class="hbadge">
+      <div class="bl">Pt. Roop Chand Joshi</div>
+      <div class="bv">1939–1952</div>
+      <div class="bl" style="margin-top:3px">Five Authentic Volumes</div>
+    </div>
+  </div>
+</header>
+
+<!-- STATUS BAR -->
+<div class="sbar">
+  <div class="sbar-inner">
+    <div class="sdot" id="wasm-dot"></div>
+    <span class="slabel">Swiss Ephemeris</span>
+    <span class="sval" id="wasm-status">Loading…</span>
+    <div class="sdiv"></div>
+    <div class="sdot" id="gh-dot"></div>
+    <span class="slabel">Prompts</span>
+    <span class="sval" id="gh-status">Waiting…</span>
+  </div>
+</div>
+
+<!-- KEY BAR -->
+<div class="kbar">
+  <div class="ki">
+    <span class="kl">🔑 Anthropic Key</span>
+    <input type="password" id="ak" class="kinp" placeholder="sk-ant-api03-…" oninput="document.getElementById('akd').className='kdot'+(this.value.trim().length>10?' ok':'')">
+    <div class="kdot" id="akd"></div>
+  </div>
+</div>
+
+<!-- GITHUB CONFIG -->
+<div class="ghbar">
+  <div class="ghinner">
+    <span class="ghlabel">📂 GitHub Prompts</span>
+    <input type="text" id="gh-url" class="ghinp"
+      placeholder="https://raw.githubusercontent.com/YOUR-USERNAME/REPO/main/lk-prompts  (paste raw URL, NOT a token)"
+      value="">
+    <button class="ghbtn" onclick="loadPrompts()">↺ Load</button>
+    <div class="ghdot" id="ghdot"></div>
+    <div class="ghnote">Paste your GitHub raw URL prefix above → click Load. Prompts cached in session. Leave blank to use built-in prompts.</div>
+  </div>
+</div>
+
+<div class="mw">
+  <div class="ecard" id="ecard">
+    <div class="ehd">
+      <div style="font-size:22px">📜</div>
+      <div>
+        <h2>Enter Birth Details — जन्म विवरण</h2>
+        <p>Birth time is required for accurate Lagna. Place + coordinates needed for Swiss Ephemeris.</p>
+      </div>
+    </div>
+    <div class="ebody">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">Full Name <span class="req">*</span></label><input type="text" id="f-name" placeholder="Your full name"></div>
+        <div class="fg"><label class="fl">Date of Birth <span class="req">*</span></label><input type="date" id="f-dob"></div>
+        <div class="fg"><label class="fl">Time of Birth <span class="req">*</span> <span class="opt">(needed for Lagna)</span></label><input type="time" id="f-tob"></div>
+        <div class="fg"><label class="fl">UTC Offset <span class="req">*</span></label>
+          <select id="f-tz">
+            <option value="+05:30">+05:30 — India (IST)</option>
+            <option value="+04:00">+04:00 — UAE (GST)</option>
+            <option value="+00:00">+00:00 — UK / UTC</option>
+            <option value="-05:00">-05:00 — USA Eastern</option>
+            <option value="-08:00">-08:00 — USA Pacific</option>
+            <option value="+05:45">+05:45 — Nepal</option>
+            <option value="+06:00">+06:00 — Bangladesh</option>
+            <option value="+08:00">+08:00 — Singapore</option>
+            <option value="+07:00">+07:00 — Thailand</option>
+            <option value="+03:00">+03:00 — East Africa</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Gender <span class="opt">(optional)</span></label>
+          <select id="f-gender"><option value="">Prefer not to say</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select>
+        </div>
+        <div class="fg"><label class="fl">Language</label>
+          <select id="f-lang"><option value="English">English</option><option value="Hindi">हिन्दी</option><option value="Hinglish">Hinglish</option></select>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:16px">
+        <label class="fl">Place of Birth <span class="req">*</span></label>
+        <div class="place-row">
+          <input type="text" id="f-place" placeholder="City, Country  e.g. Kolkata, India" onblur="autoGeo()">
+          <button class="afbtn" type="button" onclick="autoGeo()">📍 Auto Coords</button>
+        </div>
+        <div id="gmsg" style="font-size:.73rem;min-height:14px;margin-top:4px"></div>
+      </div>
+      <div class="fgrid" style="margin-top:13px">
+        <div class="fg"><label class="fl">Latitude <span class="opt">(auto-filled)</span></label><input type="number" id="f-lat" placeholder="e.g. 22.5726" step="0.0001"></div>
+        <div class="fg"><label class="fl">Longitude <span class="opt">(auto-filled)</span></label><input type="number" id="f-lon" placeholder="e.g. 88.3639" step="0.0001"></div>
+      </div>
+      <div class="fg" style="margin-top:18px">
+        <label class="fl">Primary Concerns <span class="opt">(optional)</span></label>
+        <div class="cwrap">
+          <div class="chip" data-v="Career &amp; Work"><span class="ci">💼</span>Career</div>
+          <div class="chip" data-v="Money &amp; Finance"><span class="ci">💰</span>Finance</div>
+          <div class="chip" data-v="Marriage &amp; Love"><span class="ci">❤️</span>Marriage</div>
+          <div class="chip" data-v="Family &amp; Children"><span class="ci">👨‍👩‍👧</span>Family</div>
+          <div class="chip" data-v="Health"><span class="ci">🌿</span>Health</div>
+          <div class="chip" data-v="Property &amp; Home"><span class="ci">🏠</span>Property</div>
+          <div class="chip" data-v="Legal Matters"><span class="ci">⚖️</span>Legal</div>
+          <div class="chip" data-v="Education"><span class="ci">📚</span>Education</div>
+          <div class="chip" data-v="Spiritual Growth"><span class="ci">🕉️</span>Spiritual</div>
+          <div class="chip" data-v="Business"><span class="ci">🚀</span>Business</div>
+        </div>
+      </div>
+      <div class="fg" style="margin-top:17px">
+        <label class="fl">Specific Situation <span class="opt">(optional)</span></label>
+        <textarea id="f-ctx" placeholder="e.g. Lost job 6 months ago, marriage delayed… Leave blank for general reading."></textarea>
+      </div>
+      <div style="margin-top:18px">
+        <label class="fl" style="margin-bottom:7px;display:block">Samudric Shastra <span class="opt">(optional palm reading)</span></label>
+        <label class="stog">
+          <input type="checkbox" id="sam-cb" onchange="document.getElementById('sam-qs').classList.toggle('show',this.checked)">
+          <div><strong>🖐 Enable Samudric Shastra Cross-Validation</strong><small>11 palm questions — AI cross-validates with Lal Kitab chart.</small></div>
+        </label>
+        <div id="sam-qs">
+          <div class="sqt">✋ Palm Lines</div>
+          <div class="sqg">
+            <div class="sqi"><label>Life Line</label><select id="sq-life"><option value="">--</option><option value="long_clear">Long and clear</option><option value="short">Short</option><option value="broken">Broken/chained</option><option value="faint">Faint</option><option value="forked">Forked</option></select></div>
+            <div class="sqi"><label>Head Line</label><select id="sq-head"><option value="">--</option><option value="straight">Straight (logical)</option><option value="curved">Curved (creative)</option><option value="short">Short</option><option value="broken">Broken</option><option value="fork">Fork at end</option></select></div>
+            <div class="sqi"><label>Heart Line</label><select id="sq-heart"><option value="">--</option><option value="long_curved">Long & curved</option><option value="straight">Straight</option><option value="broken">Broken</option><option value="short">Short</option><option value="deep">Deep & clear</option></select></div>
+            <div class="sqi"><label>Fate Line</label><select id="sq-fate"><option value="">--</option><option value="strong">Strong</option><option value="broken">Broken</option><option value="absent">Absent</option><option value="late">Starts mid-palm</option><option value="multiple">Multiple</option></select></div>
+          </div>
+          <div class="sqt">🏔 Mounts</div>
+          <div class="sqg">
+            <div class="sqi"><label>Jupiter Mount</label><select id="sq-mj"><option value="">--</option><option value="developed">Well developed</option><option value="flat">Flat</option><option value="over">Overdeveloped</option></select></div>
+            <div class="sqi"><label>Saturn Mount</label><select id="sq-ms"><option value="">--</option><option value="moderate">Moderate</option><option value="prominent">Prominent</option><option value="flat">Flat</option></select></div>
+            <div class="sqi"><label>Venus Mount</label><select id="sq-mv"><option value="">--</option><option value="full">Full & firm</option><option value="flat">Flat</option><option value="over">Very large</option></select></div>
+            <div class="sqi"><label>Moon Mount</label><select id="sq-mm"><option value="">--</option><option value="developed">Developed</option><option value="flat">Flat</option><option value="very_full">Very full</option></select></div>
+          </div>
+          <div class="sqt">✨ Special Marks</div>
+          <div class="sqg">
+            <div class="sqi"><label>Stars / Crosses?</label><select id="sq-star"><option value="none">None</option><option value="star_jup">Star — Jupiter</option><option value="cross_sat">Cross — Saturn</option><option value="star_sun">Star — Sun/Apollo</option><option value="cross_heart">Cross — Heart line</option></select></div>
+            <div class="sqi"><label>Breaks / Islands?</label><select id="sq-breaks"><option value="none">None</option><option value="life_break">Life line break</option><option value="head_island">Head line island</option><option value="fate_break">Fate line break</option><option value="multiple">Multiple</option></select></div>
+            <div class="sqi"><label>Hand Shape</label><select id="sq-hand"><option value="">--</option><option value="square">Square (practical)</option><option value="long">Long fingers</option><option value="round">Round/fleshy</option><option value="spatulate">Spatulate</option></select></div>
+          </div>
+        </div>
+      </div>
+      <div class="srow">
+        <button class="bgo" id="gobtn" onclick="run()">🔮 Generate Lal Kitab Reading</button>
+        <button class="brst" onclick="resetAll()">↺ Reset</button>
+      </div>
+      <div class="disc">⚠️ <strong>Disclaimer:</strong> Traditional Lal Kitab and Samudric Shastra interpretations for cultural and educational purposes only. AI-generated outputs are NOT a substitute for professional medical, legal, financial, or psychological advice. Upayas are optional cultural practices.</div>
+    </div>
+  </div>
+
+  <div class="ebox" id="ebox"><strong>⚠️ Error</strong><p id="emsg"></p></div>
+
+  <!-- LOADING -->
+  <div id="ldpan">
+    <div class="ld-title">🔴 Lal Kitab AI — 6-Agent Analysis</div>
+    <div class="ld-sub">Deep multi-agent reasoning • Authentic Pt. Roop Chand Joshi tradition</div>
+    <div class="ld-overall"><div class="ld-bar" id="ldbar"></div></div>
+    <div class="agent-grid">
+      <div class="agent-row" id="ag-wasm"><div class="agent-icon">🔭</div><div style="flex:1"><div class="agent-name">Swiss Ephemeris</div><div class="agent-desc">Sidereal chart · Lahiri Ayanamsa · Moshier precision</div></div><div class="agent-status wait" id="ags-wasm">Waiting</div></div>
+      <div class="agent-row" id="ag-1"><div class="agent-icon">🔍</div><div style="flex:1"><div class="agent-name">Agent 1 — Chart Intelligence</div><div class="agent-desc">Patterns · Karak analysis · Rin · Teva type · Aspects</div></div><div class="agent-status wait" id="ags-1">Waiting</div></div>
+      <div class="agent-row" id="ag-2"><div class="agent-icon">⚠️</div><div style="flex:1"><div class="agent-name">Agent 2 — Problem Diagnosis</div><div class="agent-desc">Mapping chart to life concerns · Dasha timing</div></div><div class="agent-status wait" id="ags-2">Waiting</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="agent-row" id="ag-3"><div class="agent-icon">🌿</div><div style="flex:1"><div class="agent-name">Agent 3 — Remedies</div><div class="agent-desc">Upayas · Conflict check</div></div><div class="agent-status wait" id="ags-3">Waiting</div></div>
+        <div class="agent-row" id="ag-4"><div class="agent-icon">🔭</div><div style="flex:1"><div class="agent-name">Agent 4 — Varshphal</div><div class="agent-desc">12-month outlook · Dasha</div></div><div class="agent-status wait" id="ags-4">Waiting</div></div>
+      </div>
+      <div class="agent-row" id="ag-5"><div class="agent-icon">✍️</div><div style="flex:1"><div class="agent-name">Agent 5 — Life Narrative</div><div class="agent-desc">Personality · Strengths · Patterns · Samudric</div></div><div class="agent-status wait" id="ags-5">Waiting</div></div>
+      <div class="agent-row" id="ag-6"><div class="agent-icon">🛡️</div><div style="flex:1"><div class="agent-name">Agent 6 — Safety Review</div><div class="agent-desc">Content safety · Final assembly</div></div><div class="agent-status wait" id="ags-6">Waiting</div></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="respanel">
+    <div class="rhd">
+      <div>
+        <div class="rname" id="rname">—</div>
+        <div class="rdob" id="rdob">—</div>
+      </div>
+      <div class="rmeta">
+        <div class="mpill" id="rlagna">🌅 —</div>
+        <div class="mpill" id="rmoon">🌙 —</div>
+        <div class="mpill" id="rnaksh">⭐ —</div>
+        <div class="mpill" id="rteva" style="display:none">📋 —</div>
+        <div class="mpill" style="background:rgba(46,125,50,.15);color:#2E7D32;border-color:#2E7D32">🪐 Swiss Ephemeris</div>
+        <div class="cbadge cm" id="rconf">Confidence: High</div>
+      </div>
+    </div>
+    <div class="ract">
+      <button class="pbtn" onclick="downloadPDF()">⬇️ Download PDF</button>
+      <button class="pbtn" onclick="resetAll()" style="color:var(--crimson);border-color:var(--crimson)">🔄 New Reading</button>
+    </div>
+    <div class="tnav">
+      <button class="tb on" onclick="stab('life')" id="tb-life">🌟 Life Overview</button>
+      <button class="tb" onclick="stab('prob')" id="tb-prob">⚠️ Problems</button>
+      <button class="tb" onclick="stab('chart')" id="tb-chart">🪐 LK Chart</button>
+      <button class="tb" onclick="stab('rem')" id="tb-rem">🌿 Remedies</button>
+      <button class="tb" onclick="stab('fut')" id="tb-fut">🔭 Upcoming</button>
+    </div>
+    <div class="tc on" id="tc-life">
+      <div class="sc"><h3>🌟 Core Life Themes & Personality</h3><div class="txt" id="r-pers">—</div></div>
+      <div class="sc"><h3>💪 Strength Areas</h3><div class="dgrid" id="r-str"></div></div>
+      <div class="sc"><h3>🔄 Recurring Life Patterns</h3><div class="txt" id="r-pat">—</div></div>
+      <div class="rinb" id="r-rin-wrap" style="display:none">
+        <div class="rint">🕉️ Lal Kitab Rin — Karmic Debt <span style="font-size:.7rem;font-weight:400;color:var(--ink-muted);margin-left:8px">(Pitru / Matru / Swa / Stree / Kanya Rin)</span></div>
+        <div class="rinb-body" id="r-rin">—</div>
+      </div>
+      <div id="r-sam-wrap" style="display:none;margin-top:15px">
+        <div class="sc"><h3>🖐 Samudric Shastra — Palm Cross-Validation</h3><div class="txt" id="r-sam-r">—</div><div class="txt" style="margin-top:9px;font-style:italic;color:var(--gold)" id="r-sam-a">—</div></div>
+      </div>
+    </div>
+    <div class="tc" id="tc-prob">
+      <div class="sc"><h3>⚠️ Problem Areas</h3><div class="dgrid" id="r-prg"></div></div>
+      <div class="sc"><h3>🪐 Root Cause — Planetary Analysis</h3><div class="txt" id="r-prt">—</div></div>
+      <div class="sc"><h3>🔑 Afflicted Houses & Karak Enemies</h3><div class="txt" id="r-pra">—</div></div>
+      <div class="safety"><span>ℹ️</span><span>Traditional Lal Kitab indications only. For health, legal, or financial matters always consult qualified professionals.</span></div>
+    </div>
+    <div class="tc" id="tc-chart">
+      <div class="sc">
+        <h3>📊 Planet-House Placement (Swiss Ephemeris · Lahiri · Aries=H1)</h3>
+        <table class="ptbl"><thead><tr><th>Planet</th><th>Sign</th><th>Degree</th><th>LK House</th><th>Nakshatra</th><th>Retro</th><th>Status</th></tr></thead><tbody id="r-ptb"></tbody></table>
+      </div>
+      <div class="sc"><h3>📋 Karak Analysis — House-by-House</h3><div class="txt" id="r-hbh">—</div></div>
+      <div class="sc"><h3>😴 Sleeping Planets, Teva Type & Special Conditions</h3><div class="txt" id="r-sp">—</div></div>
+    </div>
+    <div class="tc" id="tc-rem">
+      <div class="sc">
+        <h3>🌿 Recommended Upayas (Lal Kitab Remedies)</h3>
+        <p style="font-size:.78rem;color:var(--ink-muted);margin-bottom:11px">Daytime only · Never tell others · Never change midway · No expensive items</p>
+        <ul class="rlist" id="r-rl"></ul>
+      </div>
+      <div class="sc"><h3>🚫 What to Avoid</h3><div class="txt" id="r-avd">—</div></div>
+      <div class="safety"><span>📌</span><span>Simple daily-life actions only — no gemstones, no complex rituals, no animal harm. Authentic Lal Kitab tradition from Pt. Roop Chand Joshi.</span></div>
+    </div>
+    <div class="tc" id="tc-fut">
+      <div class="dasha-strip">
+        <div class="ds-item"><div class="ds-label">Mahadasha</div><div class="ds-val" id="ds-maha">—</div><div class="ds-end" id="ds-maha-e"></div></div>
+        <div class="ds-item"><div class="ds-label">Antardasha</div><div class="ds-val" id="ds-antar">—</div><div class="ds-end" id="ds-antar-e"></div></div>
+        <div class="ds-item"><div class="ds-label">Pratyantar</div><div class="ds-val" id="ds-prat">—</div><div class="ds-end" id="ds-prat-e"></div></div>
+      </div>
+      <div class="sc"><h3>📅 Current Dasha Analysis</h3><div class="txt" id="r-dasha">—</div></div>
+      <div class="sc"><h3>🔭 12-Month Varshphal Outlook</h3><div class="tl" id="r-tl"></div></div>
+      <div class="sc"><h3>🌅 Opportunity Windows</h3><div class="txt" id="r-opp">—</div></div>
+      <div class="sc"><h3>⚡ Caution Periods</h3><div class="txt" id="r-cau">—</div></div>
+      <div class="safety"><span>🔭</span><span>Varshphal and Dasha indications are tendencies, not certainties. Major decisions require qualified professional advice.</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script type="module">
+// ════════════════════════════════════════════════════════════
+// GITHUB PROMPT LOADER
+// ════════════════════════════════════════════════════════════
+// Fallback prompts (minimal — used if GitHub not configured)
+const FALLBACK_PROMPTS = {
+  'base-rules': `You are a master Lal Kitab astrologer trained on all 5 volumes by Pt. Roop Chand Joshi (1898-1982). Use Lal Kitab fixed house system: Aries=H1...Pisces=H12. Apply authentic Karak, Rin, Teva, Drishti rules from the 1952 magnum opus. Remedies must be simple, daily-life, affordable — no gemstones, no complex rituals, no animal harm.`,
+  'agent1': `YOUR ROLE: Agent 1 — Chart Intelligence. Detect all patterns: exalted, debilitated, sleeping, pakka_ghar, retrograde, planetary_wars, karak_analysis, afflicted_houses, rin (5 types: Pitru/Matru/Swa/Stree/Kanya), strong_planets, weak_planets, key_aspects, teva_type, lagna_analysis, moon_analysis, dasha_context, chart_summary. Return valid JSON only.`,
+  'agent2': `YOUR ROLE: Agent 2 — Problem Diagnosis. Map chart patterns to life problems using Karak enemy analysis. Explain timing via Dasha. Output: problems[], prob_root, prob_aff, dasha_diagnosis, karmic_context. Return valid JSON only.`,
+  'agent3': `YOUR ROLE: Agent 3 — Remedy Engine. Select 7-8 safe Lal Kitab upayas. No gemstones. No animal harm. Check conflicts. Output: remedies[], avoid, remedy_conflict_notes. Return valid JSON only.`,
+  'agent4': `YOUR ROLE: Agent 4 — Varshphal & Future. 12-month outlook based on Dasha + Varshphal. Output: dasha_narrative, timeline[], opp, caution. Return valid JSON only.`,
+  'agent5': `YOUR ROLE: Agent 5 — Life Narrative. Write warm, specific personality reading. Output: lagna_text, moon_text, naksh_text, personality, strengths[], patterns, sam_read, sam_align, confidence. Return valid JSON only.`,
+  'agent6': `YOUR ROLE: Agent 6 — Safety. Check for harmful content. If safe return {"safe":true}. Otherwise return only changed fields. Never return full reading.`
+};
+
+const prompts = { ...FALLBACK_PROMPTS };
+let promptsLoaded = false;
+
+window.loadPrompts = async function() {
+  const raw = document.getElementById('gh-url').value.trim().replace(/\/$/, '');
+  const dot = document.getElementById('ghdot');
+
+  if (!raw) {
+    setGHStatus('✅ Using built-in prompts (no GitHub URL entered)', false);
+    dot.className = 'ghdot ok';
+    promptsLoaded = true;
+    return;
+  }
+
+  // Detect if user accidentally pasted a token instead of URL
+  if (raw.startsWith('ghp_') || raw.startsWith('github_pat_') || !raw.startsWith('http')) {
+    dot.className = 'ghdot err';
+    setGHStatus('⚠️ That looks like a GitHub token, not a URL. Enter the raw URL: https://raw.githubusercontent.com/USERNAME/REPO/main/lk-prompts', false);
+    return;
+  }
+
+  const files = ['base-rules.txt','agent1.txt','agent2.txt','agent3.txt','agent4.txt','agent5.txt','agent6.txt'];
+  dot.className = 'ghdot';
+  setGHStatus(`Loading ${files.length} prompt files from GitHub…`, false);
+
+  let loaded = 0, failed = [];
+  try {
+    const results = await Promise.allSettled(
+      files.map(f =>
+        fetch(`${raw}/${f}`, { cache: 'no-cache' })
+          .then(r => {
+            if (!r.ok) throw new Error(`${f}: HTTP ${r.status}`);
+            return r.text();
+          })
+          .then(text => ({ key: f.replace('.txt',''), text: text.trim() }))
+      )
+    );
+
+    results.forEach((result, i) => {
+      if (result.status === 'fulfilled') {
+        prompts[result.value.key] = result.value.text;
+        loaded++;
+      } else {
+        failed.push(files[i] + ' (' + result.reason.message + ')');
+      }
+    });
+
+    if (loaded === files.length) {
+      dot.className = 'ghdot ok';
+      setGHStatus(`✅ All ${loaded} prompt files loaded from GitHub`, false);
+      sessionStorage.setItem('lk_gh_url', raw);
+      sessionStorage.setItem('lk_prompts', JSON.stringify(prompts));
+      sessionStorage.setItem('lk_prompts_ts', Date.now().toString());
+    } else if (loaded > 0) {
+      dot.className = 'ghdot ok';
+      setGHStatus(`✅ ${loaded}/${files.length} loaded. Failed: ${failed.join(', ')} — using built-in for missing`, false);
+    } else {
+      dot.className = 'ghdot err';
+      setGHStatus(`❌ All files failed (404). Check URL format: https://raw.githubusercontent.com/USERNAME/REPO/main/FOLDER`, false);
+    }
+    promptsLoaded = true;
+  } catch(e) {
+    dot.className = 'ghdot err';
+    setGHStatus(`❌ GitHub load error: ${e.message} — using built-in prompts`, false);
+    promptsLoaded = true;
+  }
+};
+
+function setGHStatus(msg, loading) {
+  document.getElementById('gh-status').textContent = msg;
+}
+
+// On load: restore from sessionStorage if recent
+(function restoreSession() {
+  const ts = sessionStorage.getItem('lk_prompts_ts');
+  const cached = sessionStorage.getItem('lk_prompts');
+  const url = sessionStorage.getItem('lk_gh_url');
+  if (cached && ts && (Date.now() - parseInt(ts)) < 3600000) {
+    Object.assign(prompts, JSON.parse(cached));
+    if (url) document.getElementById('gh-url').value = url;
+    document.getElementById('ghdot').className = 'ghdot ok';
+    setGHStatus('✅ Prompts cached from GitHub', false);
+    promptsLoaded = true;
+  } else {
+    setGHStatus('Enter GitHub URL above or use built-in prompts', false);
+    promptsLoaded = true;
+  }
+})();
+
+// ════════════════════════════════════════════════════════════
+// SWISS EPHEMERIS WASM
+// ════════════════════════════════════════════════════════════
+const CDN = 'https://cdn.jsdelivr.net/npm/swisseph-wasm@0.0.5';
+const SEFLG_SPEED = 256, SEFLG_MOSEPH = 4, SE_SIDM_LAHIRI = 1;
+const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const NAKSH = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const NAK_LORD = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
+const DASHA_YRS = {Ketu:7,Venus:20,Sun:6,Moon:10,Mars:7,Rahu:18,Jupiter:16,Saturn:19,Mercury:17};
+const DASHA_ORD = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
+const SIGN_HOUSE = {Aries:1,Taurus:2,Gemini:3,Cancer:4,Leo:5,Virgo:6,Libra:7,Scorpio:8,Sagittarius:9,Capricorn:10,Aquarius:11,Pisces:12};
+const NAT_HOUSE = {Sun:1,Moon:4,Mars:3,Mercury:6,Jupiter:9,Venus:7,Saturn:10,Rahu:11,Ketu:6};
+const EXALT = {Sun:'Aries',Moon:'Taurus',Mars:'Capricorn',Mercury:'Virgo',Jupiter:'Cancer',Venus:'Pisces',Saturn:'Libra',Rahu:'Gemini',Ketu:'Sagittarius'};
+const DEBIL = {Sun:'Libra',Moon:'Scorpio',Mars:'Cancer',Mercury:'Pisces',Jupiter:'Capricorn',Venus:'Virgo',Saturn:'Aries',Rahu:'Sagittarius',Ketu:'Gemini'};
+const SYM = {Sun:'☀️',Moon:'🌙',Mars:'♂️',Mercury:'☿',Jupiter:'♃',Venus:'♀️',Saturn:'♄',Rahu:'☊',Ketu:'☋'};
+const PLANET_IDS = {Sun:0,Moon:1,Mars:4,Mercury:2,Jupiter:5,Venus:3,Saturn:6};
+const KARAK_TABLE = {
+  1:{karak:'Sun',friends:['Moon','Jupiter','Mars'],enemies:['Venus','Saturn','Rahu','Ketu']},
+  2:{karak:'Jupiter',friends:['Sun','Moon','Mars'],enemies:['Mercury','Venus']},
+  3:{karak:'Mars',friends:['Sun','Moon','Jupiter'],enemies:['Mercury','Ketu']},
+  4:{karak:'Moon',friends:['Sun','Mercury'],enemies:['Rahu','Ketu']},
+  5:{karak:'Jupiter',friends:['Sun','Moon','Mars'],enemies:['Mercury','Venus']},
+  6:{karak:'Ketu',friends:['Venus','Rahu'],enemies:['Sun','Moon','Mars']},
+  7:{karak:'Venus',friends:['Mercury','Saturn','Ketu'],enemies:['Sun','Moon','Rahu']},
+  8:{karak:'Saturn',friends:['Mercury','Venus','Rahu'],enemies:['Sun','Moon','Mars']},
+  9:{karak:'Jupiter',friends:['Sun','Moon','Mars'],enemies:['Mercury','Venus']},
+  10:{karak:'Saturn',friends:['Mercury','Venus','Rahu'],enemies:['Sun','Moon','Mars']},
+  11:{karak:'Jupiter',friends:['Sun','Moon','Mars'],enemies:['Mercury','Venus']},
+  12:{karak:'Rahu',friends:['Mercury','Saturn','Ketu'],enemies:['Sun','Moon','Mars','Venus']}
+};
+
+let swe = null, sweReady = false;
+
+async function loadWASM() {
+  setWasmStatus('loading','Loading Swiss Ephemeris (532KB)…');
+  try {
+    const mod = await import(`${CDN}/src/swisseph.js`);
+    swe = new mod.default({ locateFile: f => `${CDN}/wasm/${f}` });
+    await swe.initSwissEph();
+    swe.set_sid_mode(SE_SIDM_LAHIRI, 0, 0);
+    sweReady = true;
+    setWasmStatus('ok','Swiss Ephemeris ready — Lahiri · Moshier');
+  } catch(e) {
+    setWasmStatus('err','Load failed: '+e.message);
+  }
+}
+
+function setWasmStatus(state, msg) {
+  const dot = document.getElementById('wasm-dot');
+  dot.className = 'sdot' + (state==='ok'?' ok':state==='err'?' err':'');
+  document.getElementById('wasm-status').textContent = msg;
+}
+
+// Ephemeris helpers
+function sidLon(trop, ayn) { return ((trop - ayn) % 360 + 360) % 360; }
+function signOf(s) { return SIGNS[Math.floor(((s%360)+360)%360/30)]; }
+function degOf(s) { return (((s%360)+360)%360%30).toFixed(2); }
+function nakOf(sid) {
+  const s = ((sid%360)+360)%360;
+  const i = Math.floor(s/(360/27))%27;
+  return { name:NAKSH[i], pada:Math.floor((s%(360/27))/(360/108))+1, lord:NAK_LORD[i%9], frac:(s%(360/27))/(360/27) };
+}
+
+function jdToDate(jd) {
+  const r = swe.revjul(jd, 1);
+  return `${String(Math.round(r.day)).padStart(2,'0')}/${String(r.month).padStart(2,'0')}/${r.year}`;
+}
+
+function calcDasha(moonSid, birthJD) {
+  const nak = nakOf(moonSid);
+  const startIdx = DASHA_ORD.indexOf(nak.lord);
+  const balance = DASHA_YRS[nak.lord] * (1 - nak.frac);
+  const todayJD = swe.julday(2026, 7, 19, 12.0);
+  let cur = { maha:'—',maha_end:'—',antar:'—',antar_end:'—',prat:'—',prat_end:'—' };
+  let mStart = birthJD;
+  for (let i = 0; i < 9; i++) {
+    const idx = (startIdx+i)%9, lord = DASHA_ORD[idx];
+    const yrs = i===0 ? balance : DASHA_YRS[lord];
+    const mEnd = mStart + yrs*365.25;
+    if (mStart<=todayJD && todayJD<mEnd) {
+      cur.maha=lord; cur.maha_end=jdToDate(mEnd);
+      let aStart=mStart;
+      for (let j=0;j<9;j++) {
+        const al=DASHA_ORD[(idx+j)%9];
+        const aEnd=aStart+DASHA_YRS[lord]*DASHA_YRS[al]/120*365.25;
+        if (aStart<=todayJD && todayJD<aEnd) {
+          cur.antar=al; cur.antar_end=jdToDate(aEnd);
+          let pStart=aStart;
+          for (let k=0;k<9;k++) {
+            const pl=DASHA_ORD[(idx+j+k)%9]; // Fixed: use (idx+j) as base for pratyantar
+            const pEnd=pStart+DASHA_YRS[lord]*DASHA_YRS[al]*DASHA_YRS[pl]/(120*120)*365.25;
+            if (pStart<=todayJD && todayJD<pEnd) { cur.prat=pl; cur.prat_end=jdToDate(pEnd); break; }
+            pStart=pEnd;
+          }
+          break;
+        }
+        aStart=aEnd;
+      }
+      break;
+    }
+    mStart = mEnd;
+  }
+  return cur;
+}
+
+function calcAspects(planets) {
+  const SPECIAL = { Mars:[4,7,8], Jupiter:[5,7,9], Saturn:[3,7,10], Rahu:[5,7,9,12], Ketu:[5,7,9,12] };
+  const asp = {};
+  for (const [n,p] of Object.entries(planets)) {
+    if (!p.lkHouse) continue;
+    const list = SPECIAL[n]||[7];
+    asp[n] = list.map(off => ((p.lkHouse-1+off-1)%12)+1);
+  }
+  return asp;
+}
+
+function planetStatus(name,sign,lkHouse,retro) {
+  if (EXALT[name]===sign) return 'Exalted';
+  if (DEBIL[name]===sign) return 'Debilitated';
+  if (NAT_HOUSE[name]===lkHouse) return 'Sleeping';
+  if (retro) return 'Retrograde';
+  return 'Active';
+}
+
+function detectTevaType(planets) {
+  const kendras=[1,4,7,10];
+  const occ = Object.values(planets).map(p=>p.lkHouse);
+  if (!occ.some(h=>kendras.includes(h))) return 'Andha Teva';
+  const benefics=['Jupiter','Venus','Mercury','Moon'];
+  const dharmaHouses=[1,5,9];
+  if (Object.entries(planets).filter(([n,p])=>benefics.includes(n)&&dharmaHouses.includes(p.lkHouse)).length>=2)
+    return 'Dharmi Teva';
+  return 'Normal';
+}
+
+function getKarakStr(planets) {
+  const occ = {};
+  for (const [n,p] of Object.entries(planets)) {
+    if (!p.lkHouse) continue;
+    if (!occ[p.lkHouse]) occ[p.lkHouse]=[];
+    occ[p.lkHouse].push(n);
+  }
+  return Object.entries(occ).map(([h,ps]) => {
+    const kt = KARAK_TABLE[h];
+    if (!kt) return '';
+    const fr = ps.filter(p=>kt.friends.includes(p));
+    const en = ps.filter(p=>kt.enemies.includes(p));
+    return `H${h}(Karak=${kt.karak}): [${ps.join(',')}] Friends=[${fr.join(',')||'none'}] Enemies=[${en.join(',')||'none'}]`;
+  }).filter(Boolean).join('\n');
+}
+
+function computeChart(y,mo,d,h,mi,lat,lon,tz) {
+  const jd = swe.julday(y,mo,d,h+mi/60.0-tz);
+  const ayn = swe.get_ayanamsa_ut(jd);
+  const planets = {};
+  for (const [n,pid] of Object.entries(PLANET_IDS)) {
+    const r = swe.calc_ut(jd,pid,SEFLG_MOSEPH|SEFLG_SPEED);
+    const sid = sidLon(r[0],ayn), sign=signOf(sid), lkHouse=SIGN_HOUSE[sign]||0;
+    const retro=r[3]<0, nak=nakOf(sid);
+    planets[n]={sign,deg:degOf(sid),retro,lkHouse,status:planetStatus(n,sign,lkHouse,retro),sid,nakshatra:nak.name,pada:nak.pada};
+  }
+  const rr=swe.calc_ut(jd,11,SEFLG_MOSEPH|SEFLG_SPEED);
+  const rs=sidLon(rr[0],ayn), ks=(rs+180)%360;
+  planets['Rahu']={sign:signOf(rs),deg:degOf(rs),retro:true,lkHouse:SIGN_HOUSE[signOf(rs)]||0,status:planetStatus('Rahu',signOf(rs),SIGN_HOUSE[signOf(rs)],true),sid:rs,...nakOf(rs),nakshatra:nakOf(rs).name,pada:nakOf(rs).pada};
+  planets['Ketu']={sign:signOf(ks),deg:degOf(ks),retro:true,lkHouse:SIGN_HOUSE[signOf(ks)]||0,status:planetStatus('Ketu',signOf(ks),SIGN_HOUSE[signOf(ks)],true),sid:ks,...nakOf(ks),nakshatra:nakOf(ks).name,pada:nakOf(ks).pada};
+  const cusps=swe.houses(jd,lat||22.5726,lon||88.3639,'W');
+  const ascSid=sidLon(cusps.ascmc[0],ayn);
+  const lagWarn=parseFloat(degOf(ascSid))<3||parseFloat(degOf(ascSid))>27?'⚠️ Cusp — verify birth time':null;
+  const moonNak=nakOf(planets['Moon'].sid);
+  return {
+    jd, ayn:ayn.toFixed(4),
+    lagna:{sign:signOf(ascSid),deg:degOf(ascSid),warn:lagWarn},
+    planets, moonNak,
+    dasha:calcDasha(planets['Moon'].sid,jd),
+    aspects:calcAspects(planets),
+    teva:detectTevaType(planets)
+  };
+}
+
+// ════════════════════════════════════════════════════════════
+// GEO CITY DB
+// ════════════════════════════════════════════════════════════
+const CITIES={kolkata:[22.5726,88.3639],calcutta:[22.5726,88.3639],mumbai:[19.076,72.8777],bombay:[19.076,72.8777],delhi:[28.6139,77.209],'new delhi':[28.6139,77.209],bangalore:[12.9716,77.5946],bengaluru:[12.9716,77.5946],hyderabad:[17.385,78.4867],chennai:[13.0827,80.2707],madras:[13.0827,80.2707],pune:[18.5204,73.8567],ahmedabad:[23.0225,72.5714],jaipur:[26.9124,75.7873],surat:[21.1702,72.8311],lucknow:[26.8467,80.9462],nagpur:[21.1458,79.0882],indore:[22.7196,75.8577],bhopal:[23.2599,77.4126],patna:[25.5941,85.1376],vadodara:[22.3072,73.1812],agra:[27.1767,78.0081],nashik:[19.9975,73.7898],varanasi:[25.3176,82.9739],amritsar:[31.634,74.8723],prayagraj:[25.4358,81.8463],allahabad:[25.4358,81.8463],ranchi:[23.3441,85.3096],coimbatore:[11.0168,76.9558],gwalior:[26.2183,78.1828],jodhpur:[26.2389,73.0243],madurai:[9.9252,78.1198],raipur:[21.2514,81.6296],chandigarh:[30.7333,76.7794],guwahati:[26.1445,91.7362],mysore:[12.2958,76.6394],mysuru:[12.2958,76.6394],kochi:[9.9312,76.2673],thiruvananthapuram:[8.5241,76.9366],trivandrum:[8.5241,76.9366],bhubaneswar:[20.2961,85.8245],dehradun:[30.3165,78.0322],siliguri:[26.7271,88.3953],visakhapatnam:[17.6868,83.2185],vijayawada:[16.5062,80.648],udaipur:[24.5854,73.7125],srinagar:[34.0837,74.7973],dubai:[25.2048,55.2708],'abu dhabi':[24.4539,54.3773],sharjah:[25.3573,55.4033],london:[51.5074,-0.1278],manchester:[53.4808,-2.2426],'new york':[40.7128,-74.006],'los angeles':[34.0522,-118.2437],chicago:[41.8781,-87.6298],toronto:[43.6532,-79.3832],singapore:[1.3521,103.8198],sydney:[-33.8688,151.2093]};
+
+window.autoGeo = async function() {
+  const raw=document.getElementById('f-place').value.trim(); if(!raw) return;
+  const msg=document.getElementById('gmsg'), key=raw.toLowerCase().replace(/,.*$/,'').trim();
+  if(CITIES[key]){document.getElementById('f-lat').value=CITIES[key][0];document.getElementById('f-lon').value=CITIES[key][1];msg.style.color='var(--success)';msg.textContent='✅ Coordinates set for '+raw;return;}
+  msg.style.color='var(--ink-muted)';msg.textContent='🔍 Looking up…';
+  try{const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(raw)}&format=json&limit=1`);const d=await r.json();if(d&&d[0]){document.getElementById('f-lat').value=parseFloat(d[0].lat).toFixed(4);document.getElementById('f-lon').value=parseFloat(d[0].lon).toFixed(4);msg.style.color='var(--success)';msg.textContent='✅ '+(d[0].display_name||raw).split(',').slice(0,2).join(',');return;}}catch(e){console.warn(e);}
+  msg.style.color='var(--ink-muted)';msg.textContent='ℹ️ Enter lat/lon manually if needed';
+};
+
+// ════════════════════════════════════════════════════════════
+// UI HELPERS
+// ════════════════════════════════════════════════════════════
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
+function getConcerns(){return[...document.querySelectorAll('.chip.on')].map(c=>c.dataset.v)}
+
+window.stab=function(id){
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('on'));
+  document.getElementById('tb-'+id).classList.add('on');
+  document.getElementById('tc-'+id).classList.add('on');
+};
+
+window.resetAll=function(){
+  document.getElementById('respanel').style.display='none';
+  document.getElementById('ecard').style.display='block';
+  document.getElementById('ldpan').style.display='none';
+  document.getElementById('ebox').classList.remove('show');
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  window.stab('life');
+  ['wasm','1','2','3','4','5','6'].forEach(id=>agentState(id,'wait'));
+  document.getElementById('ldbar').style.width='0%';
+};
+
+window.downloadPDF=function(){
+  document.querySelectorAll('.tc').forEach((t,i)=>{t.style.display='block';if(i>0)t.style.pageBreakBefore='always';});
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>{document.querySelectorAll('.tc').forEach(t=>{t.style.display='';t.style.pageBreakBefore='';});window.stab('life');},1500);
+  },300);
+};
+
+function showErr(msg){const b=document.getElementById('ebox');document.getElementById('emsg').textContent=msg;b.classList.add('show');setTimeout(()=>b.classList.remove('show'),14000);}
+
+function agentState(id,state){
+  const row=document.getElementById('ag-'+id), sts=document.getElementById('ags-'+id);
+  if(!row||!sts) return;
+  row.className='agent-row'+(state==='running'?' running':state==='done'?' done':'');
+  sts.className='agent-status '+(state==='running'?'run':state==='done'?'ok':'wait');
+  sts.textContent=state==='running'?'⟳ Running…':state==='done'?'✅ Done':'Waiting';
+}
+
+function progress(pct){document.getElementById('ldbar').style.width=pct+'%';}
+
+// ════════════════════════════════════════════════════════════
+// JSON PARSER — robust, handles truncation and markdown fences
+// ════════════════════════════════════════════════════════════
+function parseJSON(raw) {
+  if (!raw||!raw.trim()) throw new Error('Empty response');
+  let clean = raw.replace(/^```[a-zA-Z]*\s*/gm,'').replace(/^```\s*$/gm,'').trim();
+  // Don't prepend { - Claude returns full JSON naturally without prefill
+  const s=clean.indexOf('{'), e=clean.lastIndexOf('}');
+  if (s<0) throw new Error('No JSON found');
+  let js = e>s ? clean.substring(s,e+1) : clean.substring(s);
+  try { return JSON.parse(js); } catch(e1) {
+    // Find last complete }
+    let opens=[],inStr=false,esc=false,lastGood=-1;
+    for(let i=0;i<js.length;i++){const ch=js[i];if(esc){esc=false;continue;}if(ch==='\\'&&inStr){esc=true;continue;}if(ch==='"'){inStr=!inStr;continue;}if(inStr)continue;if(ch==='{'||ch==='[')opens.push(ch==='{'?'}':']');if(ch==='}'||ch===']'){opens.pop();if(opens.length===0)lastGood=i;}}
+    if(lastGood>0){try{return JSON.parse(js.substring(0,lastGood+1));}catch{}}
+    // Close unclosed
+    let fixed=js.replace(/,?\s*"[^"]*"\s*:\s*"[^"]*$/,'').replace(/,?\s*"[^"]*"\s*:\s*[^,}\]]*$/,'').replace(/,\s*$/,'');
+    let cl=[],inS=false,es=false;
+    for(let i=0;i<fixed.length;i++){const ch=fixed[i];if(es){es=false;continue;}if(ch==='\\'&&inS){es=true;continue;}if(ch==='"'){inS=!inS;continue;}if(inS)continue;if(ch==='{')cl.push('}');if(ch==='[')cl.push(']');if(ch==='}'||ch===']')cl.pop();}
+    while(cl.length)fixed+=cl.pop();
+    try{return JSON.parse(fixed);}catch(e3){throw new Error('JSON parse failed: '+e1.message);}
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// CLAUDE API
+// ════════════════════════════════════════════════════════════
+async function claude(baseRules, agentPrompt, userPrompt, ak, maxTokens=2000) {
+  const system = `CRITICAL: Return ONLY raw JSON starting with {. No markdown fences. No text before or after.\n\n${baseRules}\n\n${agentPrompt}`;
+  const r = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':ak,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,system,
+      messages:[{role:'user',content:userPrompt}]})
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||`Claude API ${r.status}`);}
+  return (await r.json()).content[0].text;
+}
+
+// ════════════════════════════════════════════════════════════
+// CHART STRING FOR PROMPTS
+// ════════════════════════════════════════════════════════════
+function chartStr(chart, u) {
+  const ps = Object.entries(chart.planets).map(([n,p])=>
+    `  ${n}: Sign=${p.sign}, LKHouse=${p.lkHouse}, Deg=${p.deg}°, Nak=${p.nakshatra} P${p.pada}, Retro=${p.retro}, Status=${p.status}`
+  ).join('\n');
+  const cd = chart.dasha;
+  return `LAL KITAB CHART (Swiss Ephemeris · Lahiri Ayanamsa=${chart.ayn}°)
+Fixed House: Aries=H1 … Pisces=H12 | Teva: ${chart.teva}
+
+LAGNA: ${chart.lagna.sign} ${chart.lagna.deg}°${chart.lagna.warn?' '+chart.lagna.warn:''}
+MOON: ${chart.planets.Moon.sign} | Nak: ${chart.moonNak.name} P${chart.moonNak.pada} (Lord: ${chart.moonNak.lord})
+
+PLANETS:
+${ps}
+
+KARAK ANALYSIS (Karak's friends/enemies in each house):
+${getKarakStr(chart.planets)}
+
+ASPECTS: ${Object.entries(chart.aspects).map(([p,hs])=>`${p}→H[${hs}]`).join(' | ')}
+
+DASHA (today ${new Date().toLocaleDateString('en-IN')}):
+  Maha: ${cd.maha} (ends ${cd.maha_end}) | Antar: ${cd.antar} (ends ${cd.antar_end}) | Pratyantar: ${cd.prat} (ends ${cd.prat_end})
+
+NAME: ${u.name} | DOB: ${u.dob} ${u.tob} UTC${u.tz} | PLACE: ${u.place}
+CONCERNS: ${u.concerns.length?u.concerns.join(', '):'General reading'} | CONTEXT: ${u.ctx||'None'}`;
+}
+
+// ════════════════════════════════════════════════════════════
+// AGENT 5 PROMPT BUILDER (language + samudric substitution)
+// ════════════════════════════════════════════════════════════
+function buildA5Prompt(lang, samOn) {
+  let p = prompts['agent5'];
+  p = p.replace('{{LANG}}', lang);
+  p = p.replace('{{SAMUDRIC_INSTRUCTION}}',
+    samOn
+      ? 'Integrate Samudric palm data provided. Cross-validate with chart planets. Include sam_read and sam_align fields.'
+      : 'No Samudric data provided. Leave sam_read and sam_align as empty strings.'
+  );
+  p = p.replace('"{{SAM_READ_FIELD}}"', samOn ? '"Samudric reading paragraph"' : '""');
+  p = p.replace('"{{SAM_ALIGN_FIELD}}"', samOn ? '"Alignment: High/Medium/Low — explanation"' : '""');
+  return p;
+}
+
+// ════════════════════════════════════════════════════════════
+// MAIN ORCHESTRATOR
+// ════════════════════════════════════════════════════════════
+window.run = async function() {
+  const ak=document.getElementById('ak').value.trim();
+  const name=document.getElementById('f-name').value.trim();
+  const dob=document.getElementById('f-dob').value;
+  const tob=document.getElementById('f-tob').value;
+  const place=document.getElementById('f-place').value.trim();
+  const lat=parseFloat(document.getElementById('f-lat').value)||null;
+  const lon=parseFloat(document.getElementById('f-lon').value)||null;
+  const tzS=document.getElementById('f-tz').value;
+  const lang=document.getElementById('f-lang').value;
+  const samOn=document.getElementById('sam-cb').checked;
+
+  if(!ak){showErr('Please enter your Anthropic API key.');return;}
+  if(!name){showErr('Please enter your name.');return;}
+  if(!dob){showErr('Please enter your date of birth.');return;}
+  if(!tob){showErr('Birth time is required for Lagna calculation.');return;}
+  if(!place){showErr('Please enter your place of birth.');return;}
+  if(!sweReady){showErr('Swiss Ephemeris not ready yet. Wait a moment.');return;}
+
+  const tzSign=tzS[0]==='+'?1:-1, [tzH,tzM]=tzS.slice(1).split(':').map(Number);
+  const tz=tzSign*(tzH+tzM/60);
+  const [y,mo,d]=dob.split('-').map(Number), [h,mi]=tob.split(':').map(Number);
+
+  const u={name,dob,tob,place,lang,tz:tzS,ctx:document.getElementById('f-ctx').value.trim(),concerns:getConcerns(),gender:document.getElementById('f-gender').value,samOn};
+  const gv=id=>{const e=document.getElementById(id);return e?e.value||'not answered':'not answered';};
+  const samData=samOn?`\nSAMUDRIC PALM DATA:\nLife=${gv('sq-life')} Head=${gv('sq-head')} Heart=${gv('sq-heart')} Fate=${gv('sq-fate')}\nJupiter=${gv('sq-mj')} Saturn=${gv('sq-ms')} Venus=${gv('sq-mv')} Moon=${gv('sq-mm')}\nMarks=${gv('sq-star')} Breaks=${gv('sq-breaks')} Hand=${gv('sq-hand')}`:'';
+
+  document.getElementById('ecard').style.display='none';
+  document.getElementById('ebox').classList.remove('show');
+  document.getElementById('ldpan').style.display='block';
+  window.resetAll();
+  document.getElementById('ldpan').style.display='block';
+
+  const BR = prompts['base-rules'];
+
+  try {
+    // WASM
+    agentState('wasm','running'); progress(5);
+    const chart = computeChart(y,mo,d,h,mi,lat||22.5726,lon||88.3639,tz);
+    agentState('wasm','done'); progress(12);
+    const cs = chartStr(chart,u);
+    console.log('Chart computed:', chart);
+
+    // A1
+    agentState('1','running'); progress(15);
+    let a1={};
+    try{a1=parseJSON(await claude(BR,prompts['agent1'],cs,ak,1800));}catch(e){console.warn('A1:',e.message);}
+    agentState('1','done'); progress(28);
+
+    // A2
+    agentState('2','running'); progress(30);
+    let a2={};
+    const a1slim={exalted:a1.exalted,debilitated:a1.debilitated,sleeping:a1.sleeping,pakka_ghar:a1.pakka_ghar,rin:a1.rin,karak_analysis:a1.karak_analysis,afflicted_houses:a1.afflicted_houses,strong_planets:a1.strong_planets,weak_planets:a1.weak_planets,chart_summary:a1.chart_summary,lagna_analysis:a1.lagna_analysis,moon_analysis:a1.moon_analysis,dasha_context:a1.dasha_context,teva_type:a1.teva_type};
+    try{a2=parseJSON(await claude(BR,prompts['agent2'],`${cs}\n\nAGENT 1:\n${JSON.stringify(a1slim)}`,ak,1800));}catch(e){console.warn('A2:',e.message);}
+    agentState('2','done'); progress(44);
+
+    // A3 + A4 parallel
+    agentState('3','running'); agentState('4','running'); progress(46);
+    const a2slim={problems:a2.problems,prob_root:a2.prob_root,prob_aff:a2.prob_aff,dasha_diagnosis:a2.dasha_diagnosis};
+    let a3={},a4={};
+    const [r3,r4]=await Promise.all([
+      claude(BR,prompts['agent3'],`${cs}\n\nA1:${JSON.stringify(a1slim)}\nA2:${JSON.stringify(a2slim)}`,ak,1800),
+      claude(BR,prompts['agent4'],`${cs}\n\nA1:${JSON.stringify(a1slim)}`,ak,1800)
+    ]);
+    try{a3=parseJSON(r3);}catch(e){console.warn('A3:',e.message);}
+    try{a4=parseJSON(r4);}catch(e){console.warn('A4:',e.message);}
+    agentState('3','done'); agentState('4','done'); progress(66);
+
+    // A5
+    agentState('5','running'); progress(68);
+    let a5={};
+    const ctx5=`${cs}\n\nCHART FINDINGS:\n${a1.chart_summary||''}\nLagna: ${a1.lagna_analysis||''}\nMoon: ${a1.moon_analysis||''}\nDasha: ${a1.dasha_context||''}\nExalted: ${(a1.exalted||[]).join(', ')}\nDebilitated: ${(a1.debilitated||[]).join(', ')}\nSleeping: ${(a1.sleeping||[]).join(', ')}\nRin: ${(a1.rin||[]).map(r=>r.type).join(', ')||'none'}\nProblems: ${(a2.problems||[]).map(p=>`${p.domain}: ${p.text}`).join('\n')}${samData}`;
+    try{a5=parseJSON(await claude(BR,buildA5Prompt(lang,samOn),ctx5,ak,3500));}catch(e){console.warn('A5:',e.message);}
+    agentState('5','done'); progress(84);
+
+    // A6 — lightweight safety patch only
+    agentState('6','running'); progress(87);
+
+    // Agent 1 may return nested {lk:{}, bnn:{}} OR flat structure — handle both
+    const a1lk  = a1.lk  || a1;   // LK data
+    const a1bnn = a1.bnn || {};    // BNN data
+
+    const assembled={
+      // LK Personality (from Agent 5)
+      lagna_text:   a5.lagna_text        || '',
+      moon_text:    a5.moon_text         || '',
+      naksh_text:   a5.naksh_text        || '',
+      personality:  a5.personality       || '',
+      strengths:    a5.strengths         || [],
+      patterns:     a5.patterns          || '',
+      // Rin from Agent 1
+      rin:          !!(a1lk.rin && a1lk.rin.length),
+      rin_detail:   (a1lk.rin||[]).map(r=>typeof r==='string'?r:(r.detail||r.type||JSON.stringify(r))).filter(Boolean).join('\n\n'),
+      // Problems from Agent 2
+      problems:     a2.problems          || [],
+      prob_root:    a2.prob_root         || '',
+      prob_aff:     a2.prob_aff          || a2.prob_afflicted || '',
+      bnn_specific_warnings: a2.bnn_specific_warnings || [],
+      // Chart from Agent 1
+      houses_reading: a1lk.chart_summary || a1lk.lagna_analysis || '',
+      special_conditions: [
+        ...(a1lk.sleeping||[]),
+        ...(a1lk.pakka_ghar||[]),
+        ...(a1lk.planetary_wars||[])
+      ].filter(Boolean).join('\n'),
+      // Remedies from Agent 3
+      remedies:     a3.remedies          || [],
+      avoid:        a3.avoid             || '',
+      // Future from Agent 4
+      dasha_narrative: a4.dasha_narrative || '',
+      timeline:     a4.timeline          || [],
+      opp:          a4.opp               || '',
+      caution:      a4.caution           || '',
+      // BNN from Agent 5 + Agent 1 BNN section
+      bnn_jupiter_text: a5.bnn_jupiter_text || a1bnn.jupiter_personality || '',
+      bnn_yogas_present: a5.bnn_yogas_present || '',
+      bnn: {
+        jupiter_rashi:   a1bnn.jupiter_rashi   || chart.planets?.Jupiter?.sign || '',
+        bnn_personality: a1bnn.bnn_personality || a5.bnn_jupiter_text || '',
+        bnn_career:      a1bnn.bnn_career      || '',
+        bnn_marriage:    a1bnn.bnn_marriage    || '',
+        bnn_wealth:      a1bnn.bnn_wealth      || '',
+        bnn_health:      a1bnn.bnn_health      || '',
+        bnn_summary:     a1bnn.bnn_summary     || '',
+        combinations:    a1bnn.combinations    || [],
+      },
+      // Cross-validation
+      cross_validation: a1.cross_validation || '',
+      // Samudric
+      sam_read:     a5.sam_read           || '',
+      sam_align:    a5.sam_align          || '',
+      confidence:   a5.confidence         || 'High',
+      // Preserve nested for DOCX
+      lk: a1lk,
+    };
+    let final={...assembled};
+    try{
+      const safetyInput=`Review for harmful content:\nPERSONALITY: ${assembled.personality.substring(0,500)}\nREMEDIES: ${JSON.stringify(assembled.remedies).substring(0,600)}\nPROBLEMS: ${JSON.stringify(assembled.problems).substring(0,500)}`;
+      const patch=parseJSON(await claude(BR,prompts['agent6'],safetyInput,ak,1000));
+      console.log('A6 patch:',patch);
+      if(patch&&patch.safe!==true){for(const[k,v]of Object.entries(patch)){if(k!=='safe'&&v)final[k]=v;}}
+    }catch(e){console.warn('A6 (non-critical):',e.message);}
+    agentState('6','done'); progress(100);
+
+    console.log('FINAL:',final);
+    setTimeout(()=>{document.getElementById('ldpan').style.display='none';renderResults(final,chart,u);},400);
+
+  }catch(err){
+    document.getElementById('ldpan').style.display='none';
+    document.getElementById('ecard').style.display='block';
+    showErr(err.message);
+    console.error('[LalKitabAI]',err);
+  }
+};
+
+// ════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════
+function pbadge(s){
+  const m={Exalted:`<span class="pb pb-ex">⭐ Exalted</span>`,Debilitated:`<span class="pb pb-de">⬇ Debil.</span>`,Sleeping:`<span class="pb pb-sl">😴 Sleeping</span>`,Retrograde:`<span class="pb pb-re">↩ Retro</span>`,Active:`<span class="pb pb-ac">✓ Active</span>`};
+  return m[s]||`<span class="pb pb-ac">—</span>`;
+}
+
+function renderResults(a,chart,u){
+  document.getElementById('rname').textContent=u.name;
+  document.getElementById('rdob').textContent=`Born: ${u.dob} at ${u.tob} UTC${u.tz} · ${u.place}`;
+  document.getElementById('rlagna').textContent=`🌅 ${chart.lagna.sign}${chart.lagna.warn?' ⚠️':''}`;
+  document.getElementById('rmoon').textContent=`🌙 ${chart.planets.Moon.sign}`;
+  document.getElementById('rnaksh').textContent=`⭐ ${chart.moonNak.name} P${chart.moonNak.pada}`;
+  if(chart.teva&&chart.teva!=='Normal'){const t=document.getElementById('rteva');t.style.display='';t.textContent='📋 '+chart.teva;}
+  const cb=document.getElementById('rconf');cb.textContent='Confidence: '+(a.confidence||'High');cb.className='cbadge '+(a.confidence==='High'?'ch':a.confidence==='Low'?'cl':'cm');
+
+  // Life tab
+  document.getElementById('r-pers').textContent=[a.lagna_text,a.moon_text,a.naksh_text,a.personality].filter(Boolean).join('\n\n');
+  const sg=document.getElementById('r-str');sg.innerHTML='';
+  (a.strengths||[]).forEach(s=>{const d=document.createElement('div');d.className='dc '+(s.status||'ok');d.innerHTML=`<div class="dt">${s.icon||'✦'} ${s.domain}</div><div class="dd">${s.text}</div>`;sg.appendChild(d);});
+  document.getElementById('r-pat').textContent=a.patterns||'';
+  if(a.rin){document.getElementById('r-rin-wrap').style.display='block';document.getElementById('r-rin').textContent=a.rin_detail||'';}
+  if(u.samOn&&a.sam_read){document.getElementById('r-sam-wrap').style.display='block';document.getElementById('r-sam-r').textContent=a.sam_read;document.getElementById('r-sam-a').textContent=a.sam_align||'';}
+
+  // Problems tab
+  const pg=document.getElementById('r-prg');pg.innerHTML='';
+  const probs=a.problems||[];
+  if(!probs.length){pg.innerHTML='<p style="color:var(--ink-muted);font-size:.84rem;padding:8px">No significant problem areas identified.</p>';}
+  else{probs.forEach(p=>{const d=document.createElement('div');d.className='dc '+(p.status||'warn');d.innerHTML=`<div class="dt">${p.icon||'⚠️'} ${p.domain}</div><div class="dd">${p.text}</div>`;pg.appendChild(d);});}
+  document.getElementById('r-prt').textContent=a.prob_root||a.root_cause||'';
+  document.getElementById('r-pra').textContent=a.prob_aff||a.prob_afflicted||'';
+
+  // Chart tab
+  const tb=document.getElementById('r-ptb');tb.innerHTML='';
+  ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'].forEach(pn=>{
+    const p=chart.planets[pn];if(!p)return;
+    const cusp=parseFloat(p.deg)<3||parseFloat(p.deg)>27;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><strong>${SYM[pn]||'●'} ${pn}</strong></td><td>${p.sign}</td><td>${p.deg}°${cusp?' <span style="color:var(--caution);font-size:.65rem">cusp</span>':''}</td><td style="font-weight:700;color:var(--crimson)">${p.lkHouse||'—'}</td><td style="font-size:.74rem;color:var(--ink-muted)">${p.nakshatra||''} P${p.pada||''}</td><td style="color:${p.retro?'var(--caution)':'var(--ink-muted)'}">${p.retro?'↩':'—'}</td><td>${pbadge(p.status)}</td>`;
+    tb.appendChild(tr);
+  });
+  const lagTr=document.createElement('tr');lagTr.style.background='rgba(139,0,0,.04)';
+  lagTr.innerHTML=`<td><strong>⬆ Lagna</strong></td><td>${chart.lagna.sign}</td><td>${chart.lagna.deg}°</td><td>—</td><td colspan="3" style="font-size:.73rem;color:var(--ink-muted)">${chart.lagna.warn||'Ascendant'}</td>`;
+  tb.appendChild(lagTr);
+  document.getElementById('r-hbh').textContent=a.houses_reading||a.house_reading||a.chart_summary||'';
+  document.getElementById('r-sp').textContent=a.special_conditions||a.special||'';
+
+  // Remedies tab
+  const rl=document.getElementById('r-rl');rl.innerHTML='';
+  (a.remedies||[]).forEach((r,i)=>{const li=document.createElement('li');li.className='ri';li.innerHTML=`<div class="rnum">${i+1}</div><div class="rbody"><div class="rtit">${r.title}</div><div class="rdesc">${r.desc||r.description||''}</div>${r.tag?`<span class="rtag">${r.tag}</span>`:''}</div>`;rl.appendChild(li);});
+  document.getElementById('r-avd').textContent=a.avoid||'';
+
+  // Upcoming tab
+  const cd=chart.dasha;
+  document.getElementById('ds-maha').textContent=cd.maha||'—';document.getElementById('ds-maha-e').textContent=cd.maha_end?'ends '+cd.maha_end:'';
+  document.getElementById('ds-antar').textContent=cd.antar||'—';document.getElementById('ds-antar-e').textContent=cd.antar_end?'ends '+cd.antar_end:'';
+  document.getElementById('ds-prat').textContent=cd.prat||'—';document.getElementById('ds-prat-e').textContent=cd.prat_end?'ends '+cd.prat_end:'';
+  document.getElementById('r-dasha').textContent=a.dasha_narrative||a.dasha_analysis||'';
+  const tl=document.getElementById('r-tl');tl.innerHTML='';
+  (a.timeline||[]).forEach(t=>{const d=document.createElement('div');d.className='tli';d.innerHTML=`<div class="tld ${t.type==='gold'?'g':t.type==='green'?'gr':''}"></div><div class="tlp">${t.period}</div><div class="tlh">${t.heading}</div><div class="tlb">${t.body}</div>`;tl.appendChild(d);});
+  document.getElementById('r-opp').textContent=a.opp||a.opportunities||'';
+  document.getElementById('r-cau').textContent=a.caution||a.caution_periods||'';
+
+  document.getElementById('respanel').style.display='block';
+  document.getElementById('respanel').scrollIntoView({behavior:'smooth'});
+
+  // Auto-generate DOCX report after render completes
+  setTimeout(()=>{
+    generateAndDownloadDOCX(a, chart, u).catch(e=>console.warn('DOCX generation failed (non-critical):', e.message));
+  }, 1000);
+}
+
+// ════════════════════════════════════════════════════════════
+// DOCX REPORT GENERATOR
+// Builds professional Word document client-side using JSZip
+// Auto-triggered after reading completes — no extra click needed
+// ════════════════════════════════════════════════════════════
+function xe(t){ return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function dp(text, opts={}) {
+  const {bold=false,size=20,color='1A0A00',align='left',after=120,italic=false,indent=0}=opts;
+  const b=bold?'<w:b/><w:bCs/>':''; const i=italic?'<w:i/><w:iCs/>':'';
+  const jc=align!=='left'?`<w:jc w:val="${align}"/>`:'';
+  const ind=indent?`<w:ind w:left="${indent}"/>`:'';
+  const lines=String(text||' ').split('\n');
+  return lines.map((line,idx)=>`<w:p><w:pPr><w:spacing w:after="${idx<lines.length-1?60:after}"/>${jc}${ind}</w:pPr><w:r><w:rPr>${b}${i}<w:sz w:val="${size}"/><w:szCs w:val="${size}"/><w:color w:val="${color}"/></w:rPr><w:t xml:space="preserve">${xe(line||' ')}</w:t></w:r></w:p>`).join('');
+}
+
+const dH1=t=>dp(t,{bold:true,size:32,color:'8B0000',align:'center',after:240});
+const dH2=t=>dp(t,{bold:true,size:26,color:'8B0000',after:200});
+const dH3=t=>dp(t,{bold:true,size:22,color:'C8922A',after:160});
+const dSub=t=>dp(t,{size:20,color:'7A5C3A',align:'center',after:60});
+const dMeta=t=>dp(t,{bold:true,size:20,color:'3D1F00',after:60});
+const dBody=t=>dp(t,{size:20,color:'1A0A00',after:120});
+const dNote=t=>dp(t,{italic:true,size:18,color:'7A5C3A',after:100,indent:360});
+const dIn=(t,c='1A0A00')=>dp(t,{size:20,color:c,after:100,indent:360});
+const dDiv=()=>`<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="D4B483"/></w:pBdr><w:spacing w:after="160"/></w:pPr></w:p>`;
+const dPg=()=>`<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
+const dSp=(a=120)=>`<w:p><w:pPr><w:spacing w:after="${a}"/></w:pPr></w:p>`;
+
+async function generateAndDownloadDOCX(a, chart, u) {
+  if (typeof JSZip === 'undefined') { console.warn('JSZip not loaded'); return; }
+  const cd=chart.dasha||{}, bnn=a.bnn||{}, lk=a.lk||{};
+  const pts=[];
+
+  // COVER
+  pts.push(dSp(480),dH1('JYOTISH INTELLIGENCE REPORT'),
+    dSub('Lal Kitab + Bhrigu Nandi Nadi Combined Analysis'),
+    dSub('Powered by Angshuman AI Corp'),dSp(240),dDiv(),
+    dMeta(`Name: ${u.name}`),
+    dMeta(`Date of Birth: ${u.dob}${u.tob?' at '+u.tob:''}`),
+    dMeta(`Place of Birth: ${u.place}`),
+    dMeta(`Lagna: ${chart.lagna.sign}${chart.lagna.warn?' ⚠ Cusp — verify birth time':''}`),
+    dMeta(`Moon Sign: ${chart.planets?.Moon?.sign||'—'} | Nakshatra: ${chart.moonNak?.name||'—'} Pada ${chart.moonNak?.pada||'—'}`),
+    dMeta(`Teva Type: ${String(lk.teva_type||a.lk?.teva_type||'Normal').split('—')[0].trim()}`),
+    dMeta(`Current Dasha: ${cd.maha||'—'} — ${cd.antar||'—'} — ${cd.prat||'—'}`),
+    dMeta(`Maha ends: ${cd.maha_end||'—'} | Antar ends: ${cd.antar_end||'—'}`),
+    dMeta(`Confidence: ${a.confidence||'High'}`),dDiv(),
+    dNote('This report integrates Lal Kitab (Pt. Roop Chand Joshi, 1939-1952) and Bhrigu Nandi Nadi (Bhrigu Rishi + Nandikeshwar Rishi, RG Rao 1950s). For cultural and personal guidance only. Not a substitute for professional medical, legal, or financial advice.'),
+    dPg());
+
+  // Helper to safely stringify any value
+  const str = v => {
+    if (!v) return '—';
+    if (typeof v === 'string') return v.trim() || '—';
+    if (typeof v === 'object') return JSON.stringify(v);
+    return String(v);
+  };
+
+  // S1 — LK PERSONALITY
+  pts.push(dH2('SECTION 1 — LAL KITAB PERSONALITY READING'),dDiv(),
+    dH3('1.1 Lagna Analysis'),dBody(str(a.lagna_text||lk.lagna_analysis)),
+    dH3('1.2 Moon Sign & Nakshatra'),dBody(str(a.moon_text||lk.moon_analysis)),
+    a.naksh_text?dBody(str(a.naksh_text)):'',
+    dH3('1.3 Core Personality & Life Themes'),dBody(str(a.personality)),
+    dH3('1.4 Strength Areas'));
+  const strengths=(a.strengths||[]).filter(s=>s&&typeof s==='object');
+  if(!strengths.length){
+    pts.push(dBody('Strength areas are integrated in the personality reading above.'));
+  } else {
+    strengths.forEach((s,i)=>{
+      const domain=s.domain||s.title||s.name||`Area ${i+1}`;
+      const text=s.text||s.description||s.desc||'';
+      pts.push(dp(`${i+1}. ${s.icon||'✦'} ${domain}`,{bold:true,size:20,color:'2E7D32',after:40}),dIn(str(text),'2E7D32'));
+    });
+  }
+  pts.push(dH3('1.5 Recurring Life Patterns'),dBody(str(a.patterns)));
+  if(a.rin){
+    pts.push(dH3('1.6 Karmic Debt (Rin) Detected'),
+      dp('⚠ Karmic debt pattern identified:',{bold:true,size:20,color:'8B0000',after:80}),
+      dBody(str(a.rin_detail)));
+  }
+  pts.push(dPg());
+
+  // S2 — BNN
+  pts.push(dH2('SECTION 2 — BHRIGU NANDI NADI READING'),dDiv(),
+    dNote(`Jupiter in ${bnn.jupiter_rashi||chart.planets?.Jupiter?.sign||'—'} — BNN House 1 (Jeeva Karaka = the Self)`),dSp(80),
+    dH3('2.1 BNN Personality (Jupiter Rashi)'),
+    dBody(str(a.bnn_jupiter_text||bnn.bnn_personality||bnn.jupiter_personality)),
+    dH3('2.2 Planetary Combinations & Named Yogas'));
+  const combos=(bnn.combinations||[]).filter(c=>c&&typeof c==='object');
+  if(combos.length){
+    combos.forEach((c,i)=>{
+      pts.push(dp(`${i+1}. ${(c.planets||[]).join(' + ')}${c.yoga_name?' — '+c.yoga_name:''}`,{bold:true,size:20,color:'8B0000',after:60}),dIn(str(c.prediction)));
+    });
+  } else {
+    pts.push(dBody(str(a.bnn_yogas_present||bnn.bnn_summary)||'BNN analysis integrated in personality reading above.'));
+  }
+  pts.push(
+    dH3('2.3 Career'),dBody(str(bnn.bnn_career)),
+    dH3('2.4 Marriage & Relationships'),dBody(str(bnn.bnn_marriage)),
+    dH3('2.5 Wealth'),dBody(str(bnn.bnn_wealth)),
+    dH3('2.6 Health'),dBody(str(bnn.bnn_health)),dPg());
+
+  // S3 — PROBLEMS
+  pts.push(dH2('SECTION 3 — PROBLEM AREAS & ROOT CAUSE'),dDiv(),dH3('3.1 Identified Challenges'));
+  const probs=(a.problems||[]).filter(p=>p&&typeof p==='object');
+  if(!probs.length){pts.push(dBody('No specific problem areas identified in this reading.'));}
+  else{probs.forEach((pr,i)=>{
+    const domain=pr.domain||pr.title||pr.area||`Area ${i+1}`;
+    const text=str(pr.text||pr.description||pr.detail||'');
+    const src=pr.source?` [${pr.source}]`:'';
+    const conf=pr.confidence?` — ${pr.confidence} confidence`:'';
+    pts.push(dp(`${i+1}. ${pr.icon||'⚠'} ${domain}${src}${conf}`,{bold:true,size:20,color:'B22222',after:60}),dIn(text));
+  });}
+  pts.push(dH3('3.2 Root Cause'),dBody(str(a.prob_root||a.root_cause)),
+    dH3('3.3 Afflicted Planets & Houses'),dBody(str(a.prob_aff||a.prob_afflicted)));
+  if((a.bnn_specific_warnings||[]).length){
+    pts.push(dH3('3.4 BNN Specific Warnings'));
+    a.bnn_specific_warnings.forEach(w=>pts.push(dp('⚠ '+str(w),{italic:true,size:18,color:'B22222',after:100,indent:360})));
+  }
+  if(a.cross_validation){pts.push(dH3('3.5 Cross-System Validation'),dBody(str(a.cross_validation)));}
+  pts.push(dPg());
+
+  // S4 — REMEDIES
+  pts.push(dH2('SECTION 4 — LAL KITAB REMEDIES (UPAYAS)'),dDiv(),
+    dNote('Rules: Daytime only · Never reveal to others · Never change midway · No expensive items · Authentic Lal Kitab tradition'),dSp(80));
+  const rems=(a.remedies||[]).filter(r=>r&&typeof r==='object');
+  if(!rems.length){pts.push(dBody('Remedies are integrated in the reading. Please consult the screen view for specific upayas.'));}
+  else{rems.forEach((r,i)=>{
+    pts.push(dp(`${i+1}. ${r.title||r.name||'Remedy'}`,{bold:true,size:20,color:'8B0000',after:60}),
+      dIn(str(r.desc||r.description||r.instruction||'')),
+      r.tag?dp(`Planet / Duration: ${r.tag}`,{italic:true,size:18,color:'C8922A',after:100,indent:360}):'');
+  });}
+  pts.push(dH3('What to Avoid'),dBody(str(a.avoid)),dPg());
+
+  // S5 — UPCOMING
+  pts.push(dH2('SECTION 5 — UPCOMING OUTLOOK'),dDiv(),
+    dH3('5.1 Dasha Period Analysis'),dBody(str(a.dasha_narrative||a.dasha_analysis)),
+    dH3('5.2 12-Month Varshphal Timeline'));
+  const timeline=(a.timeline||[]).filter(t=>t&&typeof t==='object');
+  if(!timeline.length){pts.push(dBody('Timeline analysis integrated in dasha reading above.'));}
+  else{timeline.forEach(t=>{
+    pts.push(dp(str(t.period||t.month||t.date),{bold:true,size:20,color:'C8922A',after:40}),
+      dp(str(t.heading||t.title||t.theme),{bold:true,size:20,color:'1A0A00',after:40}),
+      dIn(str(t.body||t.description||t.text||t.detail)));
+  });}
+  pts.push(
+    dH3('5.3 Opportunity Windows'),dBody(str(a.opp||a.opportunities)),
+    dH3('5.4 Caution Periods'),dBody(str(a.caution||a.caution_periods)),
+    dSp(240),dDiv(),
+    dNote('All readings are traditional indications, not certainties. Consult qualified professionals for medical, legal, and financial decisions. Remedies are optional cultural practices from the Lal Kitab tradition.'),
+    dDiv(),dSp(120),
+    dSub('Report by Angshuman AI Corp — Lal Kitab AI Platform'),
+    dSub(`Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})}`),
+    dSub('Swiss Ephemeris (Lahiri Ayanamsa) + Claude AI'));
+
+  const docXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pts.filter(Boolean).join('')}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1080" w:bottom="1440" w:left="1080"/></w:sectPr></w:body></w:document>`;
+  const stylesXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/></w:style></w:styles>`;
+
+  const zip=new JSZip();
+  zip.file('[Content_Types].xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`);
+  zip.file('_rels/.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`);
+  zip.file('word/_rels/document.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`);
+  zip.file('word/document.xml',docXml);
+  zip.file('word/styles.xml',stylesXml);
+
+  const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download=`Jyotish_Report_${u.name.replace(/\s+/g,'_')}_${u.dob.replace(/-/g,'')}.docx`;
+  document.body.appendChild(link);link.click();document.body.removeChild(link);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  console.log('✅ DOCX report downloaded');
+}
+
+// Init
+loadWASM();
+</script>
+</body>
+</html>
