@@ -999,15 +999,15 @@ window.run = async function() {
       naksh_text:   a5.naksh_text        || '',
       personality:  a5.personality       || '',
       strengths:    a5.strengths         || [],
-      patterns:     a5.patterns          || '',
+      patterns:     a5.patterns          || a5.recurring_patterns || a5.life_patterns || '',
       // Rin from Agent 1
       rin:          !!(a1lk.rin && a1lk.rin.length),
       rin_detail:   (a1lk.rin||[]).map(r=>typeof r==='string'?r:(r.detail||r.type||JSON.stringify(r))).filter(Boolean).join('\n\n'),
       // Problems from Agent 2
       problems:     a2.problems          || [],
-      prob_root:    a2.prob_root         || '',
-      prob_aff:     a2.prob_aff          || a2.prob_afflicted || '',
-      bnn_specific_warnings: a2.bnn_specific_warnings || [],
+      prob_root:    a2.prob_root         || a2.root_cause || a2.root_analysis || '',
+      prob_aff:     a2.prob_aff          || a2.prob_afflicted || a2.afflicted_houses || '',
+      bnn_specific_warnings: a2.bnn_specific_warnings || a2.bnn_warnings || [],
       // Chart from Agent 1
       houses_reading: a1lk.chart_summary || a1lk.lagna_analysis || '',
       special_conditions: [
@@ -1017,32 +1017,32 @@ window.run = async function() {
       ].filter(Boolean).join('\n'),
       // Remedies from Agent 3
       remedies:     a3.remedies          || [],
-      avoid:        a3.avoid             || '',
+      avoid:        a3.avoid             || a3.things_to_avoid || a3.avoidance || '',
       // Future from Agent 4
-      dasha_narrative: a4.dasha_narrative || '',
-      timeline:     a4.timeline          || [],
-      opp:          a4.opp               || '',
-      caution:      a4.caution           || '',
-      // BNN from Agent 5 + Agent 1 BNN section
-      bnn_jupiter_text: a5.bnn_jupiter_text || a1bnn.jupiter_personality || '',
-      bnn_yogas_present: a5.bnn_yogas_present || '',
+      dasha_narrative: a4.dasha_narrative || a4.dasha_analysis || a4.dasha_reading || '',
+      timeline:     a4.timeline          || a4.varshphal_timeline || [],
+      opp:          a4.opp               || a4.opportunities || a4.opportunity_windows || '',
+      caution:      a4.caution           || a4.caution_periods || a4.cautions || '',
+      // BNN — try Agent 5 first (has narrative), fall back to Agent 1 BNN section
+      bnn_jupiter_text: a5.bnn_jupiter_text || a1bnn.jupiter_personality || a1bnn.bnn_personality || '',
+      bnn_yogas_present: a5.bnn_yogas_present || a5.bnn_yogas || a1bnn.bnn_summary || '',
       bnn: {
         jupiter_rashi:   a1bnn.jupiter_rashi   || chart.planets?.Jupiter?.sign || '',
-        bnn_personality: a1bnn.bnn_personality || a5.bnn_jupiter_text || '',
-        bnn_career:      a1bnn.bnn_career      || '',
-        bnn_marriage:    a1bnn.bnn_marriage    || '',
-        bnn_wealth:      a1bnn.bnn_wealth      || '',
-        bnn_health:      a1bnn.bnn_health      || '',
-        bnn_summary:     a1bnn.bnn_summary     || '',
-        combinations:    a1bnn.combinations    || [],
+        bnn_personality: a5.bnn_jupiter_text   || a1bnn.bnn_personality || a1bnn.jupiter_personality || '',
+        bnn_career:      a1bnn.bnn_career      || a5.bnn_career || a2.bnn_career || '',
+        bnn_marriage:    a1bnn.bnn_marriage     || a5.bnn_marriage || a2.bnn_marriage || '',
+        bnn_wealth:      a1bnn.bnn_wealth       || a5.bnn_wealth || a2.bnn_wealth || '',
+        bnn_health:      a1bnn.bnn_health       || a5.bnn_health || a2.bnn_health || '',
+        bnn_summary:     a1bnn.bnn_summary      || a5.bnn_yogas_present || '',
+        combinations:    a1bnn.combinations     || [],
       },
       // Cross-validation
-      cross_validation: a1.cross_validation || '',
+      cross_validation: a1.cross_validation || a1lk.cross_validation || '',
       // Samudric
       sam_read:     a5.sam_read           || '',
       sam_align:    a5.sam_align          || '',
       confidence:   a5.confidence         || 'High',
-      // Preserve nested for DOCX
+      // Preserve nested for render
       lk: a1lk,
     };
     let final={...assembled};
@@ -1055,6 +1055,11 @@ window.run = async function() {
     agentState('6','done'); progress(100);
 
     console.log('FINAL:',final);
+    // Log blank field diagnostic
+    const blanks = Object.entries(final).filter(([k,v])=>!v||(Array.isArray(v)&&!v.length)||(typeof v==='string'&&!v.trim()));
+    if(blanks.length) console.warn('BLANK FIELDS in final:', blanks.map(([k])=>k).join(', '));
+    const bnnBlanks = Object.entries(final.bnn||{}).filter(([k,v])=>!v||(Array.isArray(v)&&!v.length));
+    if(bnnBlanks.length) console.warn('BLANK BNN fields:', bnnBlanks.map(([k])=>k).join(', '));
     setTimeout(()=>{document.getElementById('ldpan').style.display='none';renderResults(final,chart,u);},400);
 
   }catch(err){
