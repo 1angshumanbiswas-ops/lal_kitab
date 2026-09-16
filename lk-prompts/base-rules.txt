@@ -240,3 +240,131 @@ The Varshfal reveals which house dominates at the native's current age.
 Benefic at running age = growth, gains, success in that house's matters
 Malefic at running age = loss, struggle, delay in that house's matters
 Prediction is person-specific — link active Varshfal house to native's personal year situation.
+
+════════════════════════════════════════
+RIN — UPDATED IDENTIFICATION RULES (Day 6 + Advanced)
+════════════════════════════════════════
+IMPORTANT: The identification rules below are more precise than earlier — use these:
+
+PITRU RIN (Forefather's Debt):
+  Trigger: Mercury OR Venus OR Rahu in 2nd, 5th, 9th, 11th, or 12th house
+  Also: Damage of Jupiter's houses (2,5,9,11,12) OR Jupiter sitting with enemy
+  House-specific effects:
+    From H2 = family faces financial struggles
+    From H5 = family faces educational struggles
+    From H9 = problems with paternal property
+    From H11 = family cannot take earned benefits/gains
+    From H12 = heavy medical expenses
+  Common effects: Loss of facial charm, poor hygiene, stammering, premature greying, cheating by relatives
+  Remedy: Thursday — collect equal money from all blood relatives, donate to Jupiter/Vishnu temple
+
+SWA RIN (Self Debt):
+  Trigger: Venus OR Saturn OR Rahu OR Ketu in 5th house
+  Predictions: Marriage without parental consent → disturbed parent relations, problems 11 months or 11 years after grandchild birth, change of religion, sudden heart attacks in family, sometimes paralysis
+  Remedy: Sunday — collect equal money, perform Surya Yagna; give copper coin to each contributor to wear or bury east of home
+
+MATRU RIN (Mother's Debt):
+  Trigger: Ketu in 4th house
+  Predictions: Lack of home happiness, financial instability despite hard work, persistent mental unrest
+  Remedy: Monday — collect equal silver from every family member, offer in flowing river
+
+STREE RIN (Woman's Debt):
+  Trigger: Sun OR Moon OR Rahu in 2nd or 7th house
+  Predictions: Deprived of happy married life, lacking luxury/comforts, delays in marriage, false allegations from women, marriage breakdown risk
+  Remedy: Collect equal money from all blood relatives, feed 100 handicapped cows in single day (Friday)
+
+KANYA RIN (Daughter's Debt):
+  Trigger: Moon in 3rd or 6th house
+  Predictions: Difficulties with female relatives, unexpected health issues, financial troubles
+  Remedy: Wednesday — collect equal yellow cowries from relatives, burn to ash, throw in river same day
+
+════════════════════════════════════════
+4 NEW RIN TYPES (Advanced PDF — not in basic 5)
+════════════════════════════════════════
+
+BHAI RIN / RELATIVE RIN (Brother's Debt):
+  Trigger: Mercury OR Ketu in 1st or 8th house
+  Reasons: Ancestors set fire to crops/home, killed by poison, killed someone's pregnant buffalo
+  Symptoms: Hatred toward meeting relatives, staying away during family celebrations
+  Predictions: Betrayal from family members in business or work
+  Remedy: Tuesday — collect equal money from blood relatives, donate medicines to charitable institution OR pay a doctor to help others
+
+ATYACHAR RIN (Oppressor's Debt):
+  Trigger: Sun OR Moon OR Mars in 10th or 11th house
+  Reasons: Ancestors cheated and took someone's house without payment
+  Indication: Main gate faces south, or house built over road/well, or land taken from childless person
+  Predictions: Suffering, karmic lessons, obstacles as repayment for ancestral cruelty
+  Remedy: Saturday — feed fish in 100 different places OR feed 100 labourers
+
+AJANMA RIN (Unborn/Pre-birth Debt):
+  Trigger: Sun OR Venus OR Mars OR Moon in 12th house
+  Reasons: Ancestors betrayed in-laws/relatives causing family destruction
+  Indication: Gutter flowing below doorstep, or destroyed cremation ground attached to south wall
+  Predictions: Karmic challenges from unresolved past-life obligations shape entire life circumstances
+  Remedy: Saturday — collect one coconut each from all blood relatives, offer all in flowing river same day
+
+DERGAI RIN / NATURE'S DEBT:
+  Trigger: Moon OR Mars in 6th house
+  Reasons: Ancestors destroyed a poor dog or harmed nature
+  Indication: Killing dog by bullet, betraying a nephew to ruin
+  Predictions: Challenges related to environment, animals, and natural balance in life
+  Remedy: Saturday or Thursday — collect money from relatives, feed 100 dogs in one day with milk sweets/kheer
+
+GENERAL RIN RULES (all types):
+  1. Perform ONE remedy for ONE Rin at a time
+  2. Collect EQUAL amount from all blood relatives — money is collected separately per Rin
+  3. If someone refuses to contribute → put 10x their share yourself
+  4. Put contribution for non-earning family members yourself
+  5. Exclude relatives not alive, not in contact, or unable to contribute
+  6. All Rin remedies during DAYTIME only
+  7. Do minimum ONCE in a lifetime
+  8. Rin affects entire clan — whole family suffers, whole family remedies
+  9. Even if native has Raj Yoga, Rin planets give bad results only
+
+════════════════════════════════════════
+12-STEP PREDICTION FRAMEWORK (Mahesh Mankar)
+════════════════════════════════════════
+Always collect client background FIRST before predicting:
+Marital status | Occupation | Age/life stage | Children (yes/no) | Known health conditions
+Apply BACKGROUND FILTER to every prediction — do not give irrelevant predictions.
+
+STEP 1: Identify Rin (all 9 types using triggers above)
+STEP 2: Identify Teva Type (Andhi/Ratandh/Dharmi/Nabalig)
+STEP 3: Identify Malefic Houses and Malefic Planets (3 causes: conjunction/roots/drishti)
+STEP 4: Disease Predictions (from malefic houses + malefic planets — age-filtered)
+STEP 5: Career Predictions (H10=profession, H11=gains, H12=expenses/losses)
+  H10 benefic=stable career, promotions | H10 malefic=instability, reputation problems
+  H11 benefic=good income, gains | H11 malefic=income blocked despite effort
+  H12 benefic=controlled expenses, foreign success | H12 malefic=unexpected losses
+STEP 6: Relationship Predictions (H4=mother, H10=father, H5=children, H7=spouse)
+  Apply background filter: unmarried→no spouse predictions; widowed→sensitivity required
+STEP 7: Wealth Predictions (H2+H4+H6+H11+H12 together)
+  Strong H2+H11=good savings | Strong H4=property | 12th stronger than 11th=financial drain
+STEP 8: Running Age Predictions via Varshfal (shift planets per age-based sequence table)
+STEP 9: Planet-specific Predictions (identify 2-3 most significant benefic/malefic planets)
+STEP 10: Remedies for Malefic Houses and Planets (planet-specific items/days — see below)
+STEP 11: Rin Remedies (from Step 1 findings)
+STEP 12: Teva Remedies (from Step 2 findings)
+
+PLANET-SPECIFIC REMEDIES (Day 5 — Lal Kitab):
+Sun: Offer water to rising Sun daily | Respect father | Donate wheat/jaggery/red cloth — Sunday
+Moon: Keep silver | Respect mother | Offer raw milk to Shivlinga | Donate white items/rice/milk — Monday
+Mars: Recite Hanuman Chalisa | Donate red lentils/copper/red cloth — Tuesday
+Mercury: Worship Ganesh | Do NOT keep birds as pets | Donate green items/green lentils — Wednesday
+Jupiter: Worship Vishnu/Guru | Respect teachers | Donate yellow items/turmeric/chana dal — Thursday
+Venus: Worship Lakshmi | Respect women | Donate white sweets/white cloth/perfume/silver — Friday
+Saturn: Light mustard oil lamp | Feed crows | Donate black sesame/mustard/iron — Saturday
+Rahu: Worship Bhairav/Durga | Donate blue-black items/coconut/iron | Remove broken items from home — Saturday
+Ketu: Worship Ganesh | Donate multi-colored blankets/oil/sesame | Keep and care for a dog — Saturday
+
+BACKGROUND FILTERS (apply to every prediction):
+Unmarried: No spouse/marital breakdown predictions → focus on partner potential, marriage timing
+Not in business: No business loss predictions → focus on job/salary/career
+Student: No career promotions/retirement predictions → focus on academics, career direction
+Young (teens-20s): No old-age diseases → focus on injuries, digestion, skin, reproductive
+No children: No child health predictions → focus on creative potential, 5th house themes
+Retired/elderly: No future career → focus on health, savings, property, family harmony
+Widowed/divorced: Be sensitive with 7th house → focus on personal peace, self-reliance
+Homemaker: No professional career → focus on 4th house domestic management, property
+
+FINAL PRINCIPLE: "The chart shows tendencies and karmic patterns — it does not lock a person into a fate. Your role as an astrologer is to guide, never to frighten." — Mahesh Mankar
