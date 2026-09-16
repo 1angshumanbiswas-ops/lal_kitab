@@ -1475,35 +1475,6 @@ async function generateAndDownloadDOCX(a, chart, u) {
     dNote('This report integrates Lal Kitab (Pt. Roop Chand Joshi, 1939-1952) and Bhrigu Nandi Nadi (Bhrigu Rishi + Nandikeshwar Rishi, RG Rao 1950s). For cultural and personal guidance only. Not a substitute for professional medical, legal, or financial advice.'),
     dPg());
 
-  // CHART DATA PAGE
-  const SIGNS_FULL = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-  const lagnaIdx = SIGNS_FULL.indexOf(chart.lagna.sign);
-  pts.push(
-    dH2('PLANETARY CHART DATA'),dDiv(),
-    dp('Lagna Kundali House Placements (Vedic — Lagna as H1)',{bold:true,size:20,color:'8B0000',after:80}),
-  );
-  // Lagna chart — show which house each planet is in
-  Object.entries(chart.planets).forEach(([pname,pdata])=>{
-    const signIdx = SIGNS_FULL.indexOf(pdata.sign);
-    const lagnaH = ((signIdx - lagnaIdx + 12) % 12) + 1;
-    const retro = pdata.retro ? ' ℞' : '';
-    pts.push(dp(`${pname}${retro}: ${pdata.sign} ${pdata.deg}° → Lagna H${lagnaH} | LK H${pdata.lkHouse} | ${pdata.nakshatra} P${pdata.pada}`,{size:18,color:'1A0A00',after:60,indent:360}));
-  });
-  pts.push(
-    dp(`Lagna (Ascendant): ${chart.lagna.sign} ${chart.lagna.deg}°${chart.lagna.warn?' ⚠ Cusp':''}`,{size:18,color:'8B0000',after:60,indent:360}),
-    dSp(80),
-    dp('Lal Kitab Fixed House Placements (Aries=H1 always)',{bold:true,size:20,color:'8B0000',after:80}),
-  );
-  // Group planets by LK house
-  for (let h=1; h<=12; h++) {
-    const planetsInH = Object.entries(chart.planets).filter(([,p])=>p.lkHouse===h);
-    if (planetsInH.length) {
-      const plist = planetsInH.map(([n,p])=>`${n}${p.retro?' ℞':''} (${p.sign} ${p.deg}°)`).join(', ');
-      pts.push(dp(`H${h} (${SIGNS_FULL[h-1]}): ${plist}`,{size:18,color:'3D1F00',after:60,indent:360}));
-    }
-  }
-  pts.push(dPg());
-
   // Helper to safely stringify any value
   const str = v => {
     if (!v) return '—';
@@ -1608,7 +1579,70 @@ async function generateAndDownloadDOCX(a, chart, u) {
     dDiv(),dSp(120),
     dSub('Report by Angshuman AI Corp — Lal Kitab AI Platform'),
     dSub(`Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})}`),
-    dSub('Swiss Ephemeris (Lahiri Ayanamsa) + Claude AI'));
+    dSub('Swiss Ephemeris (Lahiri Ayanamsa) + Claude AI'),
+    dPg());
+
+  // APPENDIX — PLANETARY CHART DATA (as table, at end so it doesn't affect main reading)
+  const SF = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const lagIdx = SF.indexOf(chart.lagna.sign);
+
+  // Build Word table XML helper
+  function tblCell(text, bold=false, color='1A0A00', w=1800) {
+    return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/><w:tcBorders><w:top w:val="single" w:sz="4" w:color="D4B483"/><w:bottom w:val="single" w:sz="4" w:color="D4B483"/><w:left w:val="single" w:sz="4" w:color="D4B483"/><w:right w:val="single" w:sz="4" w:color="D4B483"/></w:tcBorders></w:tcPr><w:p><w:r><w:rPr>${bold?'<w:b/><w:bCs/>':''}<w:sz w:val="17"/><w:szCs w:val="17"/><w:color w:val="${color}"/></w:rPr><w:t xml:space="preserve">${xe(text)}</w:t></w:r></w:p></w:tc>`;
+  }
+  function tblRow(cells) {
+    return `<w:tr>${cells.join('')}</w:tr>`;
+  }
+  function tblXml(rows) {
+    return `<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="9360" w:type="dxa"/><w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid><w:gridCol w:w="1200"/><w:gridCol w:w="1800"/><w:gridCol w:w="900"/><w:gridCol w:w="900"/><w:gridCol w:w="1800"/><w:gridCol w:w="1800"/><w:gridCol w:w="960"/></w:tblGrid>${rows.join('')}</w:tbl>`;
+  }
+
+  pts.push(
+    dH2('APPENDIX — PLANETARY CHART DATA'),dDiv(),
+    dp('Lagna Kundali: Lagna (Ascendant) changes with birth date, time & place.',{bold:true,size:18,color:'8B0000',after:60}),
+    dp('Lal Kitab Kundali: Aries is always H1, fixed regardless of Lagna.',{size:18,color:'7A5C3A',after:100}),
+  );
+
+  // Planet table
+  const headerRow = tblRow([
+    tblCell('Planet',true,'8B0000',1200),
+    tblCell('Sign',true,'8B0000',1800),
+    tblCell('Degree',true,'8B0000',900),
+    tblCell('Retro',true,'8B0000',900),
+    tblCell('Nakshatra',true,'8B0000',1800),
+    tblCell('Lagna H',true,'8B0000',1800),
+    tblCell('LK H',true,'8B0000',960),
+  ]);
+
+  const planetRows = Object.entries(chart.planets).map(([pname, pdata]) => {
+    const signIdx = SF.indexOf(pdata.sign);
+    const lagnaH = ((signIdx - lagIdx + 12) % 12) + 1;
+    const retro = pdata.retro ? '℞' : '—';
+    return tblRow([
+      tblCell(pname, true, '3D1F00', 1200),
+      tblCell(pdata.sign, false, '1A0A00', 1800),
+      tblCell(pdata.deg + '°', false, '1A0A00', 900),
+      tblCell(retro, false, pdata.retro?'B22222':'666666', 900),
+      tblCell(`${pdata.nakshatra} P${pdata.pada}`, false, '1A0A00', 1800),
+      tblCell(`H${lagnaH}`, false, '1565C0', 1800),
+      tblCell(`H${pdata.lkHouse}`, true, '8B0000', 960),
+    ]);
+  });
+
+  // Lagna row
+  const lagnaRow = tblRow([
+    tblCell('Lagna ⬆', true, '8B0000', 1200),
+    tblCell(chart.lagna.sign, false, '1A0A00', 1800),
+    tblCell(chart.lagna.deg + '°', false, '1A0A00', 900),
+    tblCell('—', false, '666666', 900),
+    tblCell(chart.lagna.warn ? '⚠ Cusp' : '—', false, chart.lagna.warn?'E65100':'666666', 1800),
+    tblCell('H1', true, '1565C0', 1800),
+    tblCell(`H${SF.indexOf(chart.lagna.sign)+1}`, true, '8B0000', 960),
+  ]);
+
+  pts.push(tblXml([headerRow, ...planetRows, lagnaRow]));
+  pts.push(dSp(160),
+    dp('LK H = Lal Kitab House (Aries=H1 fixed)  |  Lagna H = Vedic house from Lagna (changes per birth data)',{italic:true,size:16,color:'7A5C3A',after:80}));
 
   const docXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${pts.filter(Boolean).join('')}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1080" w:bottom="1440" w:left="1080"/></w:sectPr></w:body></w:document>`;
   const stylesXml=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/></w:style><w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/></w:style></w:styles>`;
