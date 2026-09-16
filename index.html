@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>लाल किताब AI — Lal Kitab Intelligence Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --crimson:#8B0000;--crimson-l:#B22222;--saffron:#FF9933;--saffron-l:#FFBC66;
@@ -416,6 +416,7 @@ textarea{resize:vertical;min-height:66px}
       <button class="tb" onclick="stab('chart')" id="tb-chart">🪐 LK Chart</button>
       <button class="tb" onclick="stab('rem')" id="tb-rem">🌿 Remedies</button>
       <button class="tb" onclick="stab('fut')" id="tb-fut">🔭 Upcoming</button>
+      <button class="tb" onclick="stab('kundali')" id="tb-kundali">🗺 Charts</button>
     </div>
     <div class="tc on" id="tc-life">
       <div class="sc"><h3>🌟 Core Life Themes & Personality</h3><div class="txt" id="r-pers">—</div></div>
@@ -463,6 +464,19 @@ textarea{resize:vertical;min-height:66px}
       <div class="sc"><h3>🌅 Opportunity Windows</h3><div class="txt" id="r-opp">—</div></div>
       <div class="sc"><h3>⚡ Caution Periods</h3><div class="txt" id="r-cau">—</div></div>
       <div class="safety"><span>🔭</span><span>Varshphal and Dasha indications are tendencies, not certainties. Major decisions require qualified professional advice.</span></div>
+    </div>
+
+    <!-- CHARTS TAB -->
+    <div class="tc" id="tc-kundali">
+      <div class="sc">
+        <h3>🗺 Lagna Kundali + Lal Kitab Kundali</h3>
+        <p style="font-size:.76rem;color:var(--ink-muted);margin-bottom:16px">Left: Lagna Kundali (Vedic — Lagna in H1) &nbsp;|&nbsp; Right: Lal Kitab Kundali (Fixed — Aries always H1)</p>
+        <div id="kundali-wrap" style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center"></div>
+      </div>
+      <div class="sc" style="margin-top:0">
+        <h3>📊 Planet Positions Summary</h3>
+        <div id="kundali-legend" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:4px"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1115,6 +1129,9 @@ function renderResults(a,chart,u){
   document.getElementById('r-opp').textContent=a.opp||a.opportunities||'';
   document.getElementById('r-cau').textContent=a.caution||a.caution_periods||'';
 
+  // Render Kundali charts
+  renderKundali(chart);
+
   document.getElementById('respanel').style.display='block';
   document.getElementById('respanel').scrollIntoView({behavior:'smooth'});
 
@@ -1122,6 +1139,291 @@ function renderResults(a,chart,u){
   setTimeout(()=>{
     generateAndDownloadDOCX(a, chart, u).catch(e=>console.warn('DOCX generation failed (non-critical):', e.message));
   }, 1000);
+}
+
+// ════════════════════════════════════════════════════════════
+// KUNDALI CHART RENDERER — North Indian Style SVG
+// Left: Lagna Kundali | Right: Lal Kitab Fixed (Aries=H1)
+// ════════════════════════════════════════════════════════════
+function renderKundali(chart) {
+  const wrap = document.getElementById('kundali-wrap');
+  const legend = document.getElementById('kundali-legend');
+  if (!wrap || !chart) return;
+
+  // Planet labels: Hindi (English)
+  const PLABELS = {
+    Sun:     'रवि\n(Su)', Moon:    'चंद्र\n(Mo)', Mars:    'मंगल\n(Ma)',
+    Mercury: 'बुध\n(Me)', Jupiter: 'गुरु\n(Ju)',  Venus:   'शुक्र\n(Ve)',
+    Saturn:  'शनि\n(Sa)', Rahu:    'राहू\n(Ra)',   Ketu:    'केतु\n(Ke)',
+    Lagna:   'लग्न'
+  };
+
+  const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const SIGN_SHORT = ['Ar','Ta','Ge','Ca','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
+
+  // North Indian chart: fixed house positions (slot 0-11 anticlockwise from top)
+  // Slot layout (top diamond=slot0, then anticlockwise):
+  // Slot positions in the grid:
+  //   [0]=top, [1]=top-right, [2]=right, [3]=bottom-right
+  //   [4]=bottom, [5]=bottom-left, [6]=left, [7]=top-left
+  //   + 4 corner cells: [8]=top-left-corner,[9]=top-right-corner,[10]=bottom-right-corner,[11]=bottom-left-corner
+  // Standard North Indian: Houses go anticlockwise from top cell
+  // Cell order in standard NI layout (anticlockwise from top):
+  //   H1=top, H2=top-right, H3=right-top, H4=right-bottom (skipping corners)
+  // Actually NI standard positions:
+  const NI_HOUSE_CELLS = [
+  //  house: [col, row] in a 4x4 grid (0-indexed)
+    null,           // placeholder index 0
+    [1, 0],  // H1  = top center
+    [2, 0],  // H2  = top right
+    [3, 1],  // H3  = right top
+    [3, 2],  // H4  = right bottom
+    [2, 3],  // H5  = bottom right
+    [1, 3],  // H6  = bottom center
+    [0, 3],  // H7  = bottom left
+    [0, 2],  // H8  = left bottom
+    [0, 1],  // H9  = left top
+    [0, 0],  // H10 = top left corner
+    [1, 1],  // H11 = inner top-left (center area top)
+    [2, 1],  // H12 = inner top-right
+    [2, 2],  // --- extra (not used)
+    [1, 2],  // --- extra (not used)
+  ];
+
+  // Build planet→house mapping for both charts
+  // Lagna Kundali: Lagna sign = H1, count anticlockwise
+  const lagnaSignIdx = SIGNS.indexOf(chart.lagna.sign); // 0-11
+
+  // For each planet, compute its house number in Lagna Kundali
+  const lagnaHouses = {}; // planet → house 1-12
+  const lkHouses = {};    // planet → LK house (already in chart.planets)
+
+  for (const [pname, pdata] of Object.entries(chart.planets)) {
+    const signIdx = SIGNS.indexOf(pdata.sign);
+    // Lagna chart house = (signIdx - lagnaSignIdx + 12) % 12 + 1
+    lagnaHouses[pname] = ((signIdx - lagnaSignIdx + 12) % 12) + 1;
+    lkHouses[pname] = pdata.lkHouse || 1;
+  }
+  // Lagna itself is H1
+  lagnaHouses['Lagna'] = 1;
+  lkHouses['Lagna'] = 1; // Aries=H1 always
+
+  function buildChartData(houseMap, isLK) {
+    // Returns array of 12 cells, each with list of planets
+    const cells = Array.from({length:13}, ()=>[]);
+    for (const [pname, h] of Object.entries(houseMap)) {
+      if (h >= 1 && h <= 12) cells[h].push(pname);
+    }
+    // For LK chart, add house numbers & sign names
+    const houseLabels = [];
+    for (let h=1; h<=12; h++) {
+      if (isLK) {
+        houseLabels[h] = `${h}\n${SIGN_SHORT[h-1]}`;
+      } else {
+        // Lagna chart: sign of this house
+        const si = (lagnaSignIdx + h - 1) % 12;
+        houseLabels[h] = `${h}\n${SIGN_SHORT[si]}`;
+      }
+    }
+    return {cells, houseLabels};
+  }
+
+  function makeSVG(title, houseMap, isLK) {
+    const {cells, houseLabels} = buildChartData(houseMap, isLK);
+    const W = 280, H = 280, cx = W/2, cy = H/2;
+    const cr = W * 0.46; // outer boundary
+    // North Indian chart is a square with diamonds inside
+    // 4x4 grid of triangular cells
+
+    // Define the 12 house polygons in North Indian style
+    // Each house is a diamond/triangle shape
+    // Standard NI layout coordinates (normalized 0-1, scaled to W,H):
+    const S = W; // square size
+    const p = (x,y) => `${x*S},${y*S}`;
+    const m = 0; // margin
+
+    // 12 house polygons as arrays of [x,y] normalized 0..1
+    const POLYS = [
+      null, // 0 unused
+      // H1: top center diamond
+      [[.25,.0],[.75,.0],[.5,.25]],
+      // H2: top-right triangle
+      [[.75,.0],[1,.0],[1,.25],[.75,.25]],  // Actually corner cell
+      // H3: right-top triangle  
+      [[1,.0],[1,.5],[.75,.25]],
+      // H4: right-bottom triangle
+      [[1,.5],[1,1],[.75,.75]],
+      // H5: bottom-right corner
+      [[.75,.75],[1,1],[.75,1]],
+      // H6: bottom center diamond
+      [[.25,1],[.75,1],[.5,.75]],
+      // H7: bottom-left corner
+      [[0,1],[.25,1],[.25,.75]],
+      // H8: left-bottom triangle
+      [[0,.5],[0,1],[.25,.75]],
+      // H9: left-top triangle
+      [[0,0],[.25,.25],[0,.5]],
+      // H10: top-left corner
+      [[0,0],[.25,0],[.25,.25]],
+      // H11: inner left diamond
+      [[.25,.25],[.5,.25],[.5,.5],[.25,.5]],  // Actually: left inner
+      // H12: inner right
+      [[.5,.25],[.75,.25],[.5,.5]],
+    ];
+
+    // Better approach — standard NI house polygons
+    // Reference: the 12 houses in a North Indian chart
+    const HOUSES = {
+      1:  [[.25,0],[.75,0],[.5,.25]],
+      2:  [[.75,0],[1,0],[.75,.25]],
+      3:  [[1,0],[1,.5],[.75,.25]],
+      4:  [[1,.5],[1,1],[.75,.75]],
+      5:  [[.75,.75],[1,1],[.75,1]],
+      6:  [[.25,1],[.75,1],[.5,.75]],
+      7:  [[0,1],[.25,1],[.25,.75]],
+      8:  [[0,.5],[0,1],[.25,.75]],
+      9:  [[0,0],[.25,.25],[0,.5]],
+      10: [[0,0],[.75,0],[.5,.25],[.25,.25]],  // top-left (includes H1 boundary)
+      11: [[.25,.25],[.5,.25],[.5,.5],[.25,.5]],
+      12: [[.5,.25],[.75,.25],[.75,.5],[.5,.5]],
+      // missing: center+bottom inner
+    };
+
+    // Corrected complete NI house polygons
+    const H12 = {
+      1:  [[.25,0],[.75,0],[.5,.25]],
+      2:  [[.75,0],[1,0],[.75,.25]],
+      3:  [[1,0],[1,.5],[.75,.25]],
+      4:  [[1,.5],[1,1],[.75,.75]],
+      5:  [[.75,.75],[1,1],[.75,1]],
+      6:  [[.75,1],[.25,1],[.5,.75]],
+      7:  [[.25,1],[0,1],[.25,.75]],
+      8:  [[0,1],[0,.5],[.25,.75]],
+      9:  [[0,.5],[0,0],[.25,.25]],
+      10: [[0,0],[.25,0],[.25,.25]],
+      11: [[.25,.25],[.5,.5],[.25,.5]],
+      12: [[.75,.25],[.5,.5],[.5,.25]],
+    };
+    // Center: [[.25,.5],[.5,.75],[.75,.5],[.5,.25]] — not a house
+
+    // For the inner 4 houses (11,12, and their mirrors), use center diamond split:
+    const FULL_H12 = {
+      1:  [[.25,0],[.75,0],[.5,.25]],
+      2:  [[.75,0],[1,0],[.75,.25]],
+      3:  [[1,0],[1,.5],[.75,.25]],
+      4:  [[1,.5],[1,1],[.75,.75]],
+      5:  [[.75,.75],[1,1],[.75,1]],
+      6:  [[.75,1],[.25,1],[.5,.75]],
+      7:  [[.25,1],[0,1],[.25,.75]],
+      8:  [[0,1],[0,.5],[.25,.75]],
+      9:  [[0,.5],[0,0],[.25,.25]],
+      10: [[0,0],[.25,0],[.25,.25]],
+      11: [[.25,.25],[.5,.25],[.25,.5]],
+      12: [[.5,.25],[.75,.25],[.5,.5]],
+      // Lower inner: houses that share center
+      // H11 lower: [[.25,.5],[.5,.75],[.25,.75]] - not standard
+    };
+
+    // Planet text builder
+    function planetText(planetList) {
+      return planetList.map(p => {
+        const lab = PLABELS[p]||p;
+        const lines = lab.split('\n');
+        return lines;
+      });
+    }
+
+    let polygons = '';
+    let texts = '';
+
+    const colors = {
+      fill: 'var(--card)',
+      stroke: 'var(--crimson)',
+      houseNum: 'var(--gold)',
+      planet: 'var(--crimson)',
+      lagna: 'var(--crimson)'
+    };
+
+    for (let h=1; h<=12; h++) {
+      const pts = FULL_H12[h];
+      if (!pts) continue;
+      const scaled = pts.map(([x,y])=>[x*S, y*S]);
+      const poly = scaled.map(([x,y])=>`${x},${y}`).join(' ');
+
+      // Centroid for text placement
+      const cx_ = scaled.reduce((s,[x])=>s+x, 0)/scaled.length;
+      const cy_ = scaled.reduce((s,[,y])=>s+y, 0)/scaled.length;
+
+      const isH1 = h===1;
+      polygons += `<polygon points="${poly}" fill="${isH1?'rgba(139,0,0,0.06)':'var(--surface)'}" stroke="var(--crimson)" stroke-width="1.2"/>`;
+
+      // House number
+      texts += `<text x="${cx_}" y="${cy_-10}" text-anchor="middle" font-size="9" fill="var(--gold)" font-weight="700" font-family="Inter,sans-serif">${h}</text>`;
+
+      // Sign label (small)
+      const signIdx = isLK ? h-1 : (lagnaSignIdx + h - 1) % 12;
+      texts += `<text x="${cx_}" y="${cy_-1}" text-anchor="middle" font-size="7.5" fill="var(--ink-muted)" font-family="Inter,sans-serif">${SIGN_SHORT[signIdx]}</text>`;
+
+      // Planets in this house
+      const planetsHere = cells[h];
+      planetsHere.forEach((pname, pi) => {
+        const lab = PLABELS[pname]||pname;
+        const lines = lab.split('\n');
+        const yOff = cy_ + 8 + pi*18;
+        lines.forEach((line, li) => {
+          const isLagna = pname === 'Lagna';
+          texts += `<text x="${cx_}" y="${yOff + li*10}" text-anchor="middle" font-size="${li===0?8.5:7.5}" fill="${isLagna?'var(--crimson)':'var(--ink-soft)'}" font-weight="${li===0?'700':'400'}" font-family="Noto Sans Devanagari,Inter,sans-serif">${line}</text>`;
+        });
+      });
+    }
+
+    // Center diamond (decorative, no house)
+    const centerPts = [[.25,.5],[.5,.25],[.75,.5],[.5,.75]].map(([x,y])=>`${x*S},${y*S}`).join(' ');
+    polygons += `<polygon points="${centerPts}" fill="none" stroke="var(--crimson)" stroke-width="1.2"/>`;
+
+    return `<div style="text-align:center;flex:0 0 auto">
+      <div style="font-family:'Cinzel',serif;font-size:.8rem;font-weight:700;color:var(--crimson);margin-bottom:8px">${title}</div>
+      <svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}" style="border:1.5px solid var(--border);border-radius:8px;background:var(--card)">
+        <rect width="${S}" height="${S}" fill="var(--card)" rx="6"/>
+        ${polygons}${texts}
+      </svg>
+    </div>`;
+  }
+
+  // Build planet→house for Lagna chart
+  const lagnaMap = {};
+  for (const [pname, pdata] of Object.entries(chart.planets)) {
+    const signIdx = SIGNS.indexOf(pdata.sign);
+    lagnaMap[pname] = ((signIdx - lagnaSignIdx + 12) % 12) + 1;
+  }
+  lagnaMap['Lagna'] = 1;
+
+  // Build planet→house for LK chart (Aries=H1 fixed)
+  const lkMap = {};
+  for (const [pname, pdata] of Object.entries(chart.planets)) {
+    lkMap[pname] = SIGNS.indexOf(pdata.sign) + 1; // Aries=1
+  }
+  lkMap['Lagna'] = SIGNS.indexOf(chart.lagna.sign) + 1; // Lagna placed in its sign's house
+
+  wrap.innerHTML =
+    makeSVG('लग्न कुंडली (Lagna Kundali)', lagnaMap, false) +
+    makeSVG('लाल किताब कुंडली (LK Kundali)', lkMap, true);
+
+  // Legend
+  legend.innerHTML = Object.entries(chart.planets).map(([pname, pdata]) => {
+    const lab = (PLABELS[pname]||pname).replace('\n',' ');
+    const retro = pdata.retro ? ' ℞' : '';
+    return `<div style="background:var(--surface);border:1px solid var(--border-l);border-radius:8px;padding:6px 10px;font-size:.76rem">
+      <strong style="color:var(--crimson)">${lab}</strong>${retro}
+      <span style="color:var(--ink-muted);margin-left:4px">${pdata.sign} ${pdata.deg}°</span>
+      <span style="background:rgba(139,0,0,.08);color:var(--crimson);border-radius:4px;padding:1px 5px;margin-left:4px;font-size:.68rem">H${pdata.lkHouse}</span>
+      <span style="color:var(--ink-muted);font-size:.68rem;margin-left:3px">${pdata.nakshatra} P${pdata.pada}</span>
+    </div>`;
+  }).join('') + `<div style="background:rgba(139,0,0,.05);border:1px solid var(--crimson);border-radius:8px;padding:6px 10px;font-size:.76rem">
+    <strong style="color:var(--crimson)">⬆ Lagna</strong>
+    <span style="color:var(--ink-muted);margin-left:4px">${chart.lagna.sign} ${chart.lagna.deg}°</span>
+    ${chart.lagna.warn?`<span style="color:var(--caution);font-size:.68rem;margin-left:4px">⚠ Cusp</span>`:''}
+  </div>`;
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1172,6 +1474,35 @@ async function generateAndDownloadDOCX(a, chart, u) {
     dMeta(`Confidence: ${a.confidence||'High'}`),dDiv(),
     dNote('This report integrates Lal Kitab (Pt. Roop Chand Joshi, 1939-1952) and Bhrigu Nandi Nadi (Bhrigu Rishi + Nandikeshwar Rishi, RG Rao 1950s). For cultural and personal guidance only. Not a substitute for professional medical, legal, or financial advice.'),
     dPg());
+
+  // CHART DATA PAGE
+  const SIGNS_FULL = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const lagnaIdx = SIGNS_FULL.indexOf(chart.lagna.sign);
+  pts.push(
+    dH2('PLANETARY CHART DATA'),dDiv(),
+    dp('Lagna Kundali House Placements (Vedic — Lagna as H1)',{bold:true,size:20,color:'8B0000',after:80}),
+  );
+  // Lagna chart — show which house each planet is in
+  Object.entries(chart.planets).forEach(([pname,pdata])=>{
+    const signIdx = SIGNS_FULL.indexOf(pdata.sign);
+    const lagnaH = ((signIdx - lagnaIdx + 12) % 12) + 1;
+    const retro = pdata.retro ? ' ℞' : '';
+    pts.push(dp(`${pname}${retro}: ${pdata.sign} ${pdata.deg}° → Lagna H${lagnaH} | LK H${pdata.lkHouse} | ${pdata.nakshatra} P${pdata.pada}`,{size:18,color:'1A0A00',after:60,indent:360}));
+  });
+  pts.push(
+    dp(`Lagna (Ascendant): ${chart.lagna.sign} ${chart.lagna.deg}°${chart.lagna.warn?' ⚠ Cusp':''}`,{size:18,color:'8B0000',after:60,indent:360}),
+    dSp(80),
+    dp('Lal Kitab Fixed House Placements (Aries=H1 always)',{bold:true,size:20,color:'8B0000',after:80}),
+  );
+  // Group planets by LK house
+  for (let h=1; h<=12; h++) {
+    const planetsInH = Object.entries(chart.planets).filter(([,p])=>p.lkHouse===h);
+    if (planetsInH.length) {
+      const plist = planetsInH.map(([n,p])=>`${n}${p.retro?' ℞':''} (${p.sign} ${p.deg}°)`).join(', ');
+      pts.push(dp(`H${h} (${SIGNS_FULL[h-1]}): ${plist}`,{size:18,color:'3D1F00',after:60,indent:360}));
+    }
+  }
+  pts.push(dPg());
 
   // Helper to safely stringify any value
   const str = v => {
